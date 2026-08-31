@@ -65,6 +65,9 @@
   @media(max-width:640px){.grid{grid-template-columns:1fr}}
   .cat{background:var(--card);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow)}
   .cat.wide{grid-column:span 2}
+  .cat.accent{background:#fff8e6;border:1px solid #f0e2bd}
+  body[data-theme="dark"] .cat.accent{background:#211d12;border-color:#3a3320}
+  body[data-theme="sepia"] .cat.accent{background:#f7ecd2;border-color:#e0d3a8}
   @media(max-width:960px){.cat.wide{grid-column:span 2}}
   @media(max-width:640px){.cat.wide{grid-column:span 1}}
   .cat h3{font-size:14.5px;display:flex;align-items:center;gap:7px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--line)}
@@ -179,6 +182,14 @@ const CATS = [
   {n:'MyMiniFactory', u:'https://www.myminifactory.com'},
   {n:'立创开源平台', u:'https://oshwhub.com'},
 ]},
+{ id:'personal', icon:'👤', name:'个人模型站', tag:'独立创作者', items:[
+  {n:'ForgeCore · Thangs', d:'个人设计师主页', u:'https://thangs.com/designer/forgeCore'},
+  {n:'ForgeCore · Thingiverse', d:'同作者另一主页', u:'https://www.thingiverse.com/forgecore/designs'},
+  {n:'Pinshape', d:'独立创作者社区', u:'https://pinshape.com'},
+  {n:'3DModels.org', d:'独立模型库', u:'https://3dmodels.org'},
+  {n:'STLfinder', d:'全网模型聚合搜索', u:'https://www.stlfinder.com'},
+  {n:'CGTrader', d:'设计师直销', u:'https://www.cgtrader.com'},
+]},
 { id:'news',   icon:'📰', name:'行业资讯', tag:'选题库', items:[
   {n:'南极熊3D打印网', u:'https://www.nanjixiong.com'},
   {n:'3D打印资源库', u:'https://www.3dzyk.cn'},
@@ -192,14 +203,12 @@ const CATS = [
   {n:'秀米', u:'https://xiumi.us'},
   {n:'135编辑器', u:'https://www.135editor.com'},
 ]},
-{ id:'sell',   icon:'💰', name:'带货', tag:'变现', items:[
-  {n:'京东联盟', u:'https://union.jd.com'},
-  {n:'淘宝联盟', u:'https://pub.alimama.com'},
-]},
-{ id:'buy',    icon:'🛒', name:'采购', tag:'进货比价', items:[
-  {n:'京东', u:'https://www.jd.com'},
-  {n:'淘宝', u:'https://www.taobao.com'},
-  {n:'拼多多', u:'https://www.pinduoduo.com'},
+{ id:'buy', icon:'🛒', name:'采购', tag:'进货·变现', items:[
+  {n:'京东联盟', d:'京东佣金', u:'https://union.jd.com'},
+  {n:'淘宝联盟', d:'淘宝佣金', u:'https://pub.alimama.com'},
+  {n:'京东', d:'自营快', u:'https://www.jd.com'},
+  {n:'淘宝', d:'品类全', u:'https://www.taobao.com'},
+  {n:'拼多多', d:'低价端', u:'https://www.pinduoduo.com'},
 ]},
 ];
 
@@ -216,7 +225,7 @@ document.getElementById('navbar').innerHTML = CATS.map(c=>
 
 CATS.forEach(cat=>{
   const card=document.createElement('div');
-  card.className='cat'+(cat.wide?' wide':''); card.id=cat.id;
+  card.className='cat'+(cat.wide?' wide':'')+(cat.todo?' accent':''); card.id=cat.id;
   let inner=`<h3><span>${cat.icon}</span>${cat.name}${cat.tag?`<span class="tag">${cat.tag}</span>`:''}</h3>`;
   if(cat.todo){
     inner+='<ul class="links todo">'+cat.items.map(it=>
