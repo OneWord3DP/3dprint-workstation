@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3D耗材资料 · 3D打印工作站</title>
-
+<title>耗材资料编辑入口 · 3D打印工作站</title>
+<meta name="robots" content="noindex,nofollow">
 <style>
   :root{
     --hero:#0e6b46; --hero-ink:#ffffff; --bg:#f3f4f6; --card:#ffffff;
@@ -40,7 +40,7 @@
   .toolbar input{flex:1;min-width:200px}
   .toolbar input:focus,.toolbar select:focus{border-color:var(--green)}
   .count{font-size:12px;color:var(--muted);margin-bottom:8px}
-  
+  .edit-tip{background:var(--green-light);border:1px solid var(--green);color:var(--green);border-radius:10px;padding:9px 13px;margin-bottom:10px;font-size:12.5px;line-height:1.7}
   details.note{background:var(--green-light);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:12.5px;line-height:1.9;color:var(--ink)}
   details.note summary{cursor:pointer;font-weight:600;color:var(--green)}
   .tblcard{background:var(--card);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);overflow:auto;max-height:calc(100vh - 340px)}
@@ -49,21 +49,49 @@
   tbody td{padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top;white-space:pre-line;word-break:break-all;max-width:10em}
   tbody td a{color:var(--green);word-break:break-all}
   tbody tr:hover td{background:var(--green-light)}
-  
+  body.editing td[contenteditable]:focus{outline:2px solid var(--green);background:var(--card)}
+  body.editing td[contenteditable]{cursor:text}
   td.brand-cell{font-weight:700;white-space:nowrap}
   td.rate-cell{white-space:nowrap;font-weight:700;text-align:center}
   td.center{text-align:center}
   td.c-grey{color:var(--muted)}
   .empty{padding:40px;text-align:center;color:var(--muted);font-size:13px;display:none}
   .credit{text-align:center;color:var(--muted);font-size:11.5px;padding:10px 0 18px}
-  
+  .modal{position:fixed;inset:0;background:rgba(15,23,20,.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
+  .modal.show{display:flex}
+  .mcard{background:var(--card);border-radius:14px;padding:20px;width:720px;max-width:100%;max-height:86vh;display:flex;flex-direction:column;gap:10px}
+  .mcard h3{font-size:15px;color:var(--ink)}
+  .mcard .steps{font-size:12.5px;color:var(--muted);line-height:1.8}
+  .mcard textarea{flex:1;min-height:260px;font-family:Consolas,monospace;font-size:11.5px;border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--bg);color:var(--ink);resize:none}
+  .mcard .btns{display:flex;gap:8px;flex-wrap:wrap}
+  .mcard button{border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+  .mcard .p{background:var(--green);color:#fff}
+  .mcard .s{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+  .gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:200}
+  .gate-card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.15);padding:28px 30px;width:330px;max-width:92vw}
+  .gate-card h2{font-size:16px;margin-bottom:4px}
+  .gate-card .gs{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.7}
+  .gate-card input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:var(--bg);color:var(--ink);outline:none}
+  .gate-card input:focus{border-color:var(--green)}
+  .gate-card>button{width:100%;margin-top:10px;padding:10px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
+  .gerr{color:#dc2626;font-size:12px;margin-top:8px;display:none}
+  .glink{display:block;text-align:center;margin-top:12px;font-size:12px;color:var(--muted);text-decoration:none}
   @media(max-width:640px){ .tblcard{max-height:none} }
 </style>
 </head>
 <body data-theme="light">
-
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <h2>🔒 耗材资料编辑入口</h2>
+    <div class="gs">此页面仅用于维护数据，需输入编辑密码。<br>解锁后修改 → 导出 JSON → 提交到 GitHub 才会真正更新线上。</div>
+    <input id="gpw" type="password" placeholder="请输入编辑密码">
+    <button id="gbt">解锁编辑</button>
+    <div class="gerr" id="gerr">密码错误</div>
+    <a class="glink" href="index.html">← 返回工作站</a>
+  </div>
+</div>
 <header>
-  <h1>📚 3D耗材资料</h1>
+  <h1>🛠️ 耗材资料 · 编辑模式</h1>
   <span class="sub" id="sub">加载中…</span>
   <div class="theme-pick">
     <span class="tl">主题</span>
@@ -72,12 +100,14 @@
     <button class="tbtn t-sepia" data-t="sepia" title="米色护眼"></button>
   </div>
   <div class="sp">
-    
+    <button class="hbtn" id="btnEdit">✏️ 编辑模式</button>
+    <button class="hbtn" id="btnExport" style="display:none">📤 导出JSON</button>
+    <a class="hbtn" href="耗材资料.html">👁 预览公开页</a>
     <a class="hbtn" href="index.html">← 返回工作站</a>
   </div>
 </header>
 <div class="wrap">
-  
+  <div class="edit-tip">直接点击单元格修改，改完点右上「导出JSON」→ 复制全部内容 → 打开 GitHub 上的 <b>耗材资料.json</b>（<a href="https://github.com/OneWord3DP/3dprint-workstation/edit/main/%E8%80%97%E6%9D%90%E8%B5%84%E6%96%99.json" target="_blank" style="color:inherit">点此编辑</a>）→ 粘贴替换 → Commit，约1分钟后两站自动更新。购买链接/官网如需增删改，请直接在 JSON 里改 l 字段。</div>
   <div class="toolbar">
     <input id="q" type="text" placeholder="搜索全表任意内容…">
     <select id="fType"><option value="">全部类型</option><option>一线</option><option>打印机厂</option><option>打印机厂商</option><option>其他</option></select>
@@ -93,8 +123,19 @@
     <div class="empty" id="empty">没有匹配的记录</div>
   </div>
 </div>
-<div class="credit">数据来源：一言智造整理 · 由作者通过编辑入口维护 · 作者：一言智造 &amp; 千问办公</div>
-
+<div class="credit">编辑入口页 · 未被搜索引擎收录 · 作者：一言智造 & 千问办公</div>
+<div class="modal" id="modal">
+  <div class="mcard">
+    <h3>📤 导出更新后的数据</h3>
+    <div class="steps">① 复制或下载下面的 JSON → ② 打开 <a href="https://github.com/OneWord3DP/3dprint-workstation/edit/main/%E8%80%97%E6%9D%90%E8%B5%84%E6%96%99.json" target="_blank" style="color:var(--green)">GitHub 上的 耗材资料.json</a> → ③ 全选粘贴替换 → Commit changes → 约1分钟后自动生效。</div>
+    <textarea id="out" readonly></textarea>
+    <div class="btns">
+      <button class="p" id="btnCopy">复制到剪贴板</button>
+      <button class="s" id="btnDl">下载 耗材资料.json</button>
+      <button class="s" id="btnClose">关闭</button>
+    </div>
+  </div>
+</div>
 <script>
 var DATA=null, editing=false;
 function $(id){return document.getElementById(id);}
@@ -139,11 +180,21 @@ function render(){
       if(u&&raw)content='<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(raw)+'</a>';
       else if(u&&!raw)content='<a href="'+esc(u)+'" target="_blank" rel="noopener">🔗链接</a>';
       var cls=i===3?' class="brand-cell"':(i===1?' class="rate-cell center"':(i===2?' class="center c-grey"':''));
-      tds+='<td'+cls+' data-idx="'+idx+'">'+content+'</td>';
+      var ce=(editing&&i!==11)?' contenteditable="true"':'';
+      tds+='<td'+cls+' data-idx="'+idx+'" data-i="'+i+'"'+ce+'>'+content+'</td>';
     }
     return '<tr>'+tds+'</tr>';
   }).join('');
-  
+  if(editing){
+    var tds=document.querySelectorAll('#tb td[contenteditable]');
+    for(var k=0;k<tds.length;k++){
+      tds[k].addEventListener('blur',function(e){
+        var idx=+e.target.dataset.idx,i=+e.target.dataset.i;
+        var t=e.target.textContent.trim();
+        DATA.rows[idx].r[i]=(t==='—'?'':t);
+      });
+    }
+  }
 }
 fetch('耗材资料.json?t='+Date.now()).then(function(r){return r.json();}).then(function(d){
   DATA=d;
@@ -154,12 +205,52 @@ fetch('耗材资料.json?t='+Date.now()).then(function(r){return r.json();}).the
   $('sub').textContent=DATA.rows.length+' 个品牌 · 表格严格对应原表（含原始链接）';
   $('noteBox').textContent=DATA.note||'';
   renderHead();render();
-  
+  try{if(sessionStorage.getItem('hc_ed')==='1')openEditor();}catch(e){}
 }).catch(function(e){ $('sub').textContent='数据加载失败：'+e.message; });
 $('q').addEventListener('input',function(){if(DATA)render();});
 $('fType').addEventListener('change',function(){if(DATA)render();});
 $('fRate').addEventListener('change',function(){if(DATA)render();});
 
+$('btnEdit').addEventListener('click',function(){
+  editing=!editing;
+  document.body.classList.toggle('editing',editing);
+  $('btnEdit').classList.toggle('act',editing);
+  $('btnEdit').textContent=editing?'✅ 编辑中（点此退出）':'✏️ 编辑模式';
+  $('btnExport').style.display=editing?'inline-block':'none';
+  if(DATA)render();
+});
+$('btnExport').addEventListener('click',function(){
+  var out={note:DATA.note,head:DATA.head,rows:DATA.rows.map(function(r){return {r:r.r,l:r.l||{}};})};
+  $('out').value=JSON.stringify(out);
+  $('modal').classList.add('show');
+});
+$('btnCopy').addEventListener('click',function(){
+  $('out').select();
+  try{navigator.clipboard.writeText($('out').value);}catch(e){document.execCommand('copy');}
+  $('btnCopy').textContent='✅ 已复制';
+  setTimeout(function(){$('btnCopy').textContent='复制到剪贴板';},1500);
+});
+$('btnDl').addEventListener('click',function(){
+  var blob=new Blob([$('out').value],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='耗材资料.json';a.click();
+});
+$('btnClose').addEventListener('click',function(){$('modal').classList.remove('show');});
+// 密码门（SHA-256 比对，源码不含明文；真正写回仍需 GitHub 权限）
+var PWH='1f2de1a9da8bdf97c9a05793e08f5edbca9eacd0a2e259ba47fe963d01158968';
+function sha(t){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0');}).join('');});}
+function openEditor(){
+  $('gate').style.display='none';
+  if(!editing)$('btnEdit').click();
+}
+function unlock(){
+  var v=$('gpw').value;
+  sha(v).then(function(h){
+    if(h===PWH){try{sessionStorage.setItem('hc_ed','1');}catch(e){}openEditor();}
+    else{$('gerr').style.display='block';}
+  });
+}
+$('gbt').addEventListener('click',unlock);
+$('gpw').addEventListener('keydown',function(e){if(e.key==='Enter')unlock();});
 var THEME_KEY='fdm_theme_v1';
 function applyTheme(t){
   document.body.dataset.theme=t;
