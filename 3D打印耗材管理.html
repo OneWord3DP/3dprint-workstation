@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D打印耗材管理</title>
+<style>
+  :root{
+    --green:#0e6b46; --green-dark:#0a5237; --green-light:#e7f3ee;
+    --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+    --bg:#f3f4f6; --card:#ffffff; --amber:#b45309; --amber-bg:#fef3c7; --red:#dc2626;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:16px}
+  .wrap{max-width:1080px;margin:0 auto}
+  header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  h1{font-size:24px}
+  .sub{color:var(--muted);font-size:13px;margin-top:5px}
+  a.back{font-size:13px;color:var(--green);text-decoration:none;background:var(--green-light);padding:8px 14px;border-radius:8px;font-weight:600}
+  a.back:hover{background:#d7e9e1}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+  @media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:var(--card);border-radius:12px;padding:13px 16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .stat .lbl{font-size:12px;color:var(--muted)}
+  .stat .val{font-size:20px;font-weight:700;margin-top:3px}
+  .stat.hl{background:var(--green)}
+  .stat.hl .lbl,.stat.hl .val{color:#fff}
+  .grid{display:grid;grid-template-columns:330px 1fr;gap:14px;align-items:start}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);overflow:hidden}
+  .form-card{padding:14px}
+  .form-card h2,.list-card h2{font-size:15px;margin-bottom:10px;border-left:4px solid var(--green);padding-left:8px}
+  .field{margin-bottom:9px}
+  .field label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:3px}
+  .field input,.field select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:6px;font-size:13px;background:#fafafa;outline:none}
+  .field input:focus,.field select:focus{border-color:var(--green);background:#fff}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .btn{background:var(--green);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13.5px;font-weight:600;cursor:pointer}
+  .btn:hover{background:var(--green-dark)}
+  .btn.ghost{background:#fff;color:var(--green);border:1px solid var(--green)}
+  .btn.sm{padding:4px 10px;font-size:12px;border-radius:6px}
+  .btn.warn{background:var(--red)}
+  .btn.warn:hover{background:#b91c1c}
+  .actions{display:flex;gap:8px;margin-top:6px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead th{background:#f9fafb;color:var(--muted);font-weight:600;text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody td{padding:9px 12px;border-bottom:1px solid #f1f2f4;vertical-align:middle}
+  tbody tr:hover{background:#fafcfa}
+  .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px;border:1px solid rgba(0,0,0,.12)}
+  .bar{background:#e5e7eb;border-radius:99px;height:8px;width:110px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--green);border-radius:99px}
+  .bar i.low{background:var(--amber)}
+  .bar i.empty{background:var(--red)}
+  .pct{font-size:11px;color:var(--muted);margin-left:6px}
+  .empty-tip{padding:30px;text-align:center;color:var(--muted);font-size:13px}
+  .note{margin-top:12px;background:var(--amber-bg);border:1px solid #fde68a;color:var(--amber);font-size:12px;padding:8px 12px;border-radius:8px;line-height:1.6}
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s}
+  .toast.show{opacity:.92}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>3D打印耗材管理</h1>
+      <div class="sub">记录每一卷耗材的品牌、材质、颜色与剩余量，消耗一键扣减，库存一目了然。</div>
+    </div>
+    <a class="back" href="index.html">← 返回工作站</a>
+  </header>
+
+  <div class="stats">
+    <div class="stat hl"><div class="lbl">在库卷数</div><div class="val" id="stCount">0 卷</div></div>
+    <div class="stat"><div class="lbl">剩余总重量</div><div class="val" id="stWeight">0 g</div></div>
+    <div class="stat"><div class="lbl">库存价值</div><div class="val" id="stValue">¥0.00</div></div>
+    <div class="stat"><div class="lbl">余量不足（&lt;15%）</div><div class="val" id="stLow">0 卷</div></div>
+  </div>
+
+  <div class="grid">
+    <!-- 左：入库表单 -->
+    <div class="card form-card">
+      <h2>耗材入库</h2>
+      <div class="field"><label>品牌</label><input id="fBrand" type="text" placeholder="如：三绿 / Bambu / eSun"></div>
+      <div class="frow">
+        <div class="field"><label>材质</label>
+          <select id="fMat">
+            <option>PLA</option><option>PETG</option><option>ABS</option>
+            <option>TPU</option><option>PETG-CF</option><option>树脂</option><option>其他</option>
+          </select>
+        </div>
+        <div class="field"><label>颜色</label><input id="fColor" type="text" placeholder="如：白色"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>整卷重量（g）</label><input id="fWeight" type="number" value="1000" step="50"></div>
+        <div class="field"><label>单价（元/卷）</label><input id="fPrice" type="number" value="60" step="1"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="btnAdd">＋ 入库</button>
+        <button class="btn ghost" id="btnDemo">载入示例</button>
+      </div>
+      <div class="note">数据保存在本浏览器中（localStorage），换电脑或清除浏览器数据会丢失；重要库存建议定期导出。</div>
+    </div>
+
+    <!-- 右：库存列表 -->
+    <div class="card list-card">
+      <h2>库存明细</h2>
+      <table>
+        <thead><tr><th>耗材</th><th>剩余量</th><th>消耗操作</th><th style="width:70px"></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty-tip" id="emptyTip">还没有入库记录，先在左侧添加一卷吧～</div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">已保存</div>
+
+<script>
+const KEY = 'fdm_filament_v1';
+let list = [];
+try{ list = JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ list = []; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(list)); }catch(e){} }
+const $ = id => document.getElementById(id);
+const COLORS = {'PLA':'#22c07d','PETG':'#4f8ef7','ABS':'#e0813f','TPU':'#9b7ef2','PETG-CF':'#374151','树脂':'#e5697c','其他':'#6b7280'};
+
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1400); }
+
+function addSpool(b,m,c,w,p){
+  list.push({id:Date.now()+Math.random(), brand:b||'未命名', mat:m, color:c||'-', total:w, left:w, price:p});
+  save(); render(); toast('已入库');
+}
+function consume(id,g){
+  const it = list.find(x=>x.id===id); if(!it) return;
+  it.left = Math.max(0, it.left-g); save(); render();
+}
+function removeSpool(id){
+  list = list.filter(x=>x.id!==id); save(); render(); toast('已移除');
+}
+
+function render(){
+  const rows = $('rows');
+  $('emptyTip').style.display = list.length ? 'none' : 'block';
+  rows.innerHTML = list.map(it=>{
+    const pct = it.total>0 ? it.left/it.total : 0;
+    const cls = pct<=0.001?'empty':(pct<0.15?'low':'');
+    const c = it.color.match(/^#?[0-9a-fA-F]{6}$/) ? (it.color.startsWith('#')?it.color:'#'+it.color) : null;
+    return `<tr>
+      <td><span class="dot" style="background:${c||COLORS[it.mat]||'#6b7280'}"></span><b>${it.brand}</b>
+          <span style="color:var(--muted);font-size:12px">${it.mat} · ${it.color}</span><br>
+          <span style="color:var(--muted);font-size:11px">整卷 ${it.total}g · ¥${(+it.price).toFixed(2)}</span></td>
+      <td><div style="display:flex;align-items:center"><span class="bar"><i class="${cls}" style="width:${Math.max(pct*100,1.5)}%"></i></span>
+          <span class="pct">${Math.round(it.left)}g · ${Math.round(pct*100)}%</span></div></td>
+      <td>
+        <button class="btn sm ghost" onclick="consume(${it.id},10)">-10g</button>
+        <button class="btn sm ghost" onclick="consume(${it.id},50)">-50g</button>
+        <button class="btn sm ghost" onclick="consume(${it.id},100)">-100g</button>
+        <button class="btn sm warn" onclick="consume(${it.id},99999)">用完</button>
+      </td>
+      <td><button class="btn sm ghost" onclick="removeSpool(${it.id})">移除</button></td>
+    </tr>`;
+  }).join('');
+
+  const totalLeft = list.reduce((s,x)=>s+x.left,0);
+  const value = list.reduce((s,x)=>s+x.left/(x.total||1)*x.price,0);
+  const low = list.filter(x=>x.total>0 && x.left/x.total<0.15 && x.left>0).length;
+  $('stCount').textContent = list.length+' 卷';
+  $('stWeight').textContent = Math.round(totalLeft).toLocaleString()+' g';
+  $('stValue').textContent = '¥'+value.toFixed(2);
+  $('stLow').textContent = low+' 卷';
+}
+
+$('btnAdd').addEventListener('click',()=>{
+  const w = parseFloat($('fWeight').value)||1000;
+  addSpool($('fBrand').value.trim(), $('fMat').value, $('fColor').value.trim(), w, parseFloat($('fPrice').value)||0);
+});
+$('btnDemo').addEventListener('click',()=>{
+  addSpool('三绿','PLA','白色',1000,59.9);
+  addSpool('Bambu','PETG','黑色',1000,129);
+  addSpool('eSun','PLA+','灰色',1000,69);
+  toast('已载入3卷示例');
+});
+
+render();
+</script>
+</body>
+</html>

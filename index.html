@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D打印工作站</title>
+<style>
+  :root{
+    --bg:#f3f4f6; --card:#ffffff; --hero:#0e6b46; --hero-ink:#ffffff;
+    --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+    --green:#0e6b46; --green-dark:#0a5237; --green-light:#e7f3ee;
+    --hover:#e7f3ee; --shadow:0 1px 3px rgba(0,0,0,.08);
+  }
+  body[data-theme="dark"]{
+    --bg:#0f1512; --card:#161d1a; --hero:#14201b; --hero-ink:#e8efeb;
+    --ink:#e8efeb; --muted:#8fa39a; --line:#2a3530;
+    --green:#22c07d; --green-dark:#2bd48c; --green-light:rgba(34,192,125,.12);
+    --hover:rgba(34,192,125,.10); --shadow:0 1px 3px rgba(0,0,0,.4);
+  }
+  body[data-theme="sepia"]{
+    --bg:#f4eee1; --card:#fffdf7; --hero:#7a5c2e; --hero-ink:#fffdf7;
+    --ink:#3d3323; --muted:#8c7f66; --line:#e6dcc6;
+    --green:#8a6524; --green-dark:#6e5119; --green-light:#f3ead6;
+    --hover:#f3ead6; --shadow:0 1px 3px rgba(122,92,46,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);transition:background .25s,color .25s;padding-bottom:60px}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+  /* ---- 顶部 ---- */
+  .hero{background:var(--hero);color:var(--hero-ink);border-radius:0 0 14px 14px;padding:16px 22px}
+  .hero .row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .hero h1{font-size:19px;letter-spacing:1px}
+  .hero .clock{margin-left:auto;text-align:right}
+  .hero .clock .time{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+  .hero .clock .date{font-size:11.5px;opacity:.85}
+  .theme-pick{display:flex;gap:6px;align-items:center}
+  .theme-pick .tl{font-size:11.5px;opacity:.8;margin-right:2px}
+  .tbtn{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.55);cursor:pointer;padding:0}
+  .tbtn.on{border-color:#fff;outline:2px solid rgba(255,255,255,.35)}
+  .tbtn.t-light{background:linear-gradient(135deg,#ffffff 50%,#0e6b46 50%)}
+  .tbtn.t-dark{background:linear-gradient(135deg,#161d1a 50%,#22c07d 50%)}
+  .tbtn.t-sepia{background:linear-gradient(135deg,#fffdf7 50%,#7a5c2e 50%)}
+  /* ---- 搜索 ---- */
+  .searchbar{display:flex;gap:8px;margin:16px 0 14px;flex-wrap:wrap}
+  .searchbar input{flex:1;min-width:240px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 16px;font-size:14px;color:var(--ink);outline:none;box-shadow:var(--shadow)}
+  .searchbar input:focus{border-color:var(--green)}
+  .eng{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 18px;font-size:13px;color:var(--muted);cursor:pointer;font-weight:500}
+  .eng.on{border-color:var(--green);color:var(--green);font-weight:600;background:var(--green-light)}
+  /* ---- 常用工具 ---- */
+  .quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+  .qt{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 15px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow);transition:transform .12s,border-color .12s}
+  .qt:hover{transform:translateY(-2px);border-color:var(--green)}
+  .qt .ic{font-size:20px;width:42px;height:42px;background:var(--green-light);border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+  .qt .n{font-size:13.5px;font-weight:600}
+  .qt .d{font-size:11px;color:var(--muted);margin-top:1px}
+  /* ---- 吸顶导航 ---- */
+  .navbar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);padding:8px 0;border-bottom:1px solid var(--line)}
+  .navbar .inner{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .navbar a{font-size:12.5px;color:var(--muted);text-decoration:none;padding:5px 12px;border-radius:99px}
+  .navbar a:hover{color:var(--green);background:var(--green-light)}
+  /* ---- 卡片 ---- */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0 6px}
+  @media(max-width:960px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  .cat{background:var(--card);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow)}
+  .cat.wide{grid-column:span 2}
+  @media(max-width:960px){.cat.wide{grid-column:span 2}}
+  @media(max-width:640px){.cat.wide{grid-column:span 1}}
+  .cat h3{font-size:14.5px;display:flex;align-items:center;gap:7px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .cat h3 .tag{font-size:10px;font-weight:400;color:var(--green);background:var(--green-light);border-radius:4px;padding:2px 6px;margin-left:auto}
+  ul.links{list-style:none}
+  ul.links li{margin:0}
+  ul.links a{display:flex;align-items:center;gap:9px;padding:6.5px 8px;border-radius:8px;text-decoration:none;color:var(--ink);font-size:13px}
+  ul.links a:hover{background:var(--hover)}
+  ul.links a:hover .name{color:var(--green)}
+  ul.links.two{display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
+  @media(max-width:640px){ul.links.two{grid-template-columns:1fr}}
+  ul.links.two .desc{display:none}
+  .av{width:22px;height:22px;border-radius:6px;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;opacity:.92}
+  .name{font-weight:500}
+  .desc{font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:118px}
+  /* ---- 待办 ---- */
+  .todo li{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:8px;font-size:13px}
+  .todo li:hover{background:var(--hover)}
+  .todo input{width:15px;height:15px;accent-color:var(--green);cursor:pointer;flex:none}
+  .todo li.done span{color:var(--muted);text-decoration:line-through}
+  .todo .t-desc{font-size:11px;color:var(--muted);margin-left:auto}
+  footer{margin-top:24px;font-size:11.5px;color:var(--muted);text-align:center}
+  .top-btn{position:fixed;right:22px;bottom:26px;width:42px;height:42px;border-radius:50%;background:var(--green);color:var(--hero-ink);border:none;font-size:18px;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:opacity .25s;z-index:99}
+  .top-btn.show{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body data-theme="light">
+
+<div class="hero">
+  <div class="wrap row" style="padding:0">
+    <h1>🖨️ 3D打印工作站</h1>
+    <div class="theme-pick">
+      <span class="tl">主题</span>
+      <button class="tbtn t-light on" data-t="light" title="浅色绿"></button>
+      <button class="tbtn t-dark" data-t="dark" title="深色"></button>
+      <button class="tbtn t-sepia" data-t="sepia" title="米色护眼"></button>
+    </div>
+    <div class="clock">
+      <div class="time" id="time">--:--</div>
+      <div class="date" id="date"></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="searchbar">
+    <input id="q" type="text" placeholder="输入关键词，选平台直达搜索…" onkeydown="if(event.key==='Enter')go()">
+    <button class="eng on" data-e="bili">B站</button>
+    <button class="eng" data-e="douyin">抖音</button>
+    <button class="eng" data-e="xhs">小红书</button>
+  </div>
+
+  <div class="quick" id="quick"></div>
+</div>
+
+<div class="navbar"><div class="wrap inner" id="navbar"></div></div>
+
+<div class="wrap"><div class="grid" id="grid"></div></div>
+
+<footer>链接要增删随时说；报价计算器与耗材管理与本站同域，点开即用。待办清单刷新后重置。<br>作者：一言智造 &amp; 千问办公</footer>
+
+<button class="top-btn" id="topBtn" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ============ 配置区 ============
+const AV_COLORS = ['#0e6b46','#4f8ef7','#b45309','#e5697c','#9b7ef2','#38bdc8','#e0813f','#7ac74f'];
+
+const QUICK = [
+  {ic:'📰', n:'3D打印每日热点', d:'每天自动更新', u:'每日热点.html'},
+  {ic:'🧮', n:'3D打印报价计算器', d:'接单算价 · 秒出报价', u:'3D打印报价计算器.html'},
+  {ic:'🧵', n:'3D打印耗材管理', d:'多账号 · 云端同步', u:'3D打印耗材管理.html'},
+  {ic:'📚', n:'3D耗材资料', d:'耗材参数在线表格', u:'耗材资料.html'},
+  {ic:'🏆', n:'3D模型比赛汇总', d:'各平台赛事日历', u:'打印比赛.html'},
+
+
+];
+
+const CATS = [
+{ id:'flow',   icon:'📋', name:'每日流程清单', tag:'日报', todo:true, items:[
+  {n:'收集近48h热点', d:'B站/榜单/资讯'},
+  {n:'生成3D打印日报', d:'视频+硬件+模型榜'},
+  {n:'选封面图 · 修标题', d:'16:9与3:4各一张'},
+  {n:'发布公众号/视频号', d:'各创作中心'},
+  {n:'回看昨日数据', d:'播放/涨粉/转化'},
+]},
+{ id:'studio', icon:'🚀', name:'创作中心', tag:'发布与数据', items:[
+  {n:'B站创作中心', u:'https://member.bilibili.com/platform/home'},
+  {n:'抖音创作中心', u:'https://creator.douyin.com'},
+  {n:'小红书创作中心', u:'https://creator.xiaohongshu.com'},
+  {n:'视频号创作中心', u:'https://channels.weixin.qq.com/platform'},
+  {n:'YouTube Studio', u:'https://studio.youtube.com'},
+]},
+{ id:'tools',icon:'🧰',name:'3D打印工具',tag:'常用',items:[
+  {n:'报价计算器',u:'3D打印报价计算器.html'},
+  {n:'耗材管理',u:'3D打印耗材管理.html'},
+    {n:'耗材资料表',d:'参数+购买链接',u:'耗材资料.html'},
+    {n:'模型比赛汇总',d:'赛事日历',u:'打印比赛.html'},
+  {n:'可打印地图',d:'城市地形模型',u:'https://miniskyline.com/map'},
+  {n:'ItsLitho 石版画',d:'照片转浮雕灯罩',u:'https://itslitho.com'},
+  {n:'Hero Forge 手办',d:'在线定制人偶',u:'https://www.heroforge.com'},
+  {n:'ViewSTL 在线查看',d:'打开STL测量缩放',u:'https://viewstl.com'},
+]},
+{ id:'models', icon:'🧩', name:'模型网站', tag:'找图找模型', wide:true, items:[
+  {n:'MakerWorld 中国', u:'https://makerworld.com.cn'},
+  {n:'MakerWorld 国际', u:'https://makerworld.com'},
+  {n:'创想云中国', u:'https://www.crealitycloud.cn'},
+    {n:'创想云国际', u:'https://www.crealitycloud.com'},
+  {n:'Printables', u:'https://printables.com'},
+  {n:'Thingiverse', u:'https://www.thingiverse.com'},
+  {n:'Cults3D', u:'https://cults3d.com'},
+  {n:'Thangs', u:'https://thangs.com'},
+  {n:'MyMiniFactory', u:'https://www.myminifactory.com'},
+  {n:'立创开源平台', u:'https://oshwhub.com'},
+]},
+{ id:'news',   icon:'📰', name:'行业资讯', tag:'选题库', items:[
+  {n:'南极熊3D打印网', u:'https://www.nanjixiong.com'},
+  {n:'3D打印资源库', u:'https://www.3dzyk.cn'},
+  {n:'All3DP', u:'https://all3dp.com'},
+  {n:'Reddit r/3Dprinting', u:'https://www.reddit.com/r/3Dprinting/'},
+  {n:'3D Printing Industry', u:'https://3dprintingindustry.com'},
+]},
+{ id:'write',  icon:'✍️', name:'写作与发布', tag:'公众号', items:[
+  {n:'微信公众号平台', u:'https://mp.weixin.qq.com'},
+  {n:'腾讯文档', u:'https://docs.qq.com'},
+  {n:'秀米', u:'https://xiumi.us'},
+  {n:'135编辑器', u:'https://www.135editor.com'},
+]},
+{ id:'sell',   icon:'💰', name:'带货', tag:'变现', items:[
+  {n:'京东联盟', u:'https://union.jd.com'},
+  {n:'淘宝联盟', u:'https://pub.alimama.com'},
+]},
+{ id:'buy',    icon:'🛒', name:'采购', tag:'进货比价', items:[
+  {n:'京东', u:'https://www.jd.com'},
+  {n:'淘宝', u:'https://www.taobao.com'},
+  {n:'拼多多', u:'https://www.pinduoduo.com'},
+]},
+];
+
+// ============ 渲染 ============
+const grid=document.getElementById('grid');
+let ci=0;
+
+document.getElementById('quick').innerHTML = QUICK.map(q=>
+  `<a class="qt" href="${q.u}" ${q.u.startsWith('http')?'target="_blank" rel="noopener"':''}>
+    <span class="ic">${q.ic}</span><span><div class="n">${q.n}</div><div class="d">${q.d}</div></span></a>`).join('');
+
+document.getElementById('navbar').innerHTML = CATS.map(c=>
+  `<a href="#${c.id}">${c.name}</a>`).join('');
+
+CATS.forEach(cat=>{
+  const card=document.createElement('div');
+  card.className='cat'+(cat.wide?' wide':''); card.id=cat.id;
+  let inner=`<h3><span>${cat.icon}</span>${cat.name}${cat.tag?`<span class="tag">${cat.tag}</span>`:''}</h3>`;
+  if(cat.todo){
+    inner+='<ul class="links todo">'+cat.items.map(it=>
+      `<li><input type="checkbox" onchange="this.parentElement.classList.toggle('done',this.checked)"><span>${it.n}</span><span class="t-desc">${it.d||''}</span></li>`).join('')+'</ul>';
+  }else{
+    const two=cat.items.length>=7?' two':'';
+    inner+='<ul class="links'+two+'">'+cat.items.map(it=>{
+      const c=AV_COLORS[ci++%AV_COLORS.length];
+      const letter=it.n.replace(/[^A-Za-z\u4e00-\u9fa5]/g,'').charAt(0)||'·';
+      return `<li><a href="${it.u||'#'}" ${it.u&&it.u.startsWith('http')?'target="_blank" rel="noopener"':''}>
+        <span class="av" style="background:${c}">${letter}</span><span class="name">${it.n}</span><span class="desc">${it.d||''}</span></a></li>`;
+    }).join('')+'</ul>';
+  }
+  card.innerHTML=inner;
+  grid.appendChild(card);
+});
+
+// ============ 主题切换 ============
+const THEME_KEY='fdm_theme_v1';
+function applyTheme(t){
+  document.body.dataset.theme=t;
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  try{localStorage.setItem(THEME_KEY,t);}catch(e){}
+}
+document.querySelectorAll('.tbtn').forEach(b=>b.addEventListener('click',()=>applyTheme(b.dataset.t)));
+try{
+  const saved=localStorage.getItem(THEME_KEY);
+  if(saved) applyTheme(saved);
+}catch(e){}
+
+// ============ 时钟 ============
+function tick(){
+  const d=new Date();
+  document.getElementById('time').textContent=d.toTimeString().slice(0,5);
+  const wd=['日','一','二','三','四','五','六'][d.getDay()];
+  document.getElementById('date').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${wd}`;
+}
+tick(); setInterval(tick,15000);
+
+// ============ 搜索 ============
+const ENGINES={
+  bili:q=>'https://search.bilibili.com/all?keyword='+encodeURIComponent(q),
+  douyin:q=>'https://www.douyin.com/search/'+encodeURIComponent(q),
+  xhs:q=>'https://www.xiaohongshu.com/search_result?keyword='+encodeURIComponent(q),
+};
+let cur='bili';
+document.querySelectorAll('.eng').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.eng').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); cur=b.dataset.e;
+  if(document.getElementById('q').value.trim()) go();
+}));
+function go(){
+  const q=document.getElementById('q').value.trim();
+  if(q) window.open(ENGINES[cur](q),'_blank');
+}
+
+const topBtn=document.getElementById('topBtn');
+addEventListener('scroll',()=>topBtn.classList.toggle('show',scrollY>400));
+</script>
+</body>
+</html>

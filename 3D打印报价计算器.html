@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D打印报价计算器</title>
+<style>
+  :root{
+    --green:#0e6b46; --green-dark:#0a5237; --green-light:#e7f3ee;
+    --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+    --bg:#f3f4f6; --card:#ffffff; --amber:#b45309; --amber-bg:#fef3c7;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:16px}
+  .wrap{max-width:1180px;margin:0 auto}
+  header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  h1{font-size:26px;letter-spacing:.5px}
+  .sub{color:var(--muted);font-size:13px;margin-top:6px}
+  .badges{display:flex;gap:10px;flex-wrap:wrap}
+  .badge{background:var(--green);color:#fff;font-size:13px;padding:8px 14px;border-radius:8px;white-space:nowrap}
+  .badge b{font-weight:700}
+  .grid{display:grid;grid-template-columns:322px 1fr;gap:12px;align-items:stretch}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  /* ---- 左侧表单 ---- */
+  .form-card{padding:11px 12px}
+  .form-card h2{font-size:14px;margin-bottom:8px;border-left:4px solid var(--green);padding-left:7px}
+  .sec-title{font-size:11.5px;color:var(--green);font-weight:700;margin:9px 0 5px}
+  .sec-title:first-of-type{margin-top:2px}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}
+  .frow.one{grid-template-columns:1fr}
+  .field label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .field input,.field select{width:100%;padding:5px 7px;border:1px solid var(--line);border-radius:6px;font-size:12px;background:#fafafa;outline:none}
+  .field input:focus,.field select:focus{border-color:var(--green);background:#fff}
+  .hint{font-size:11px;color:var(--muted);margin-top:2px}
+  /* ---- 右侧结果 ---- */
+  .result-card{overflow:hidden}
+  .rhead{background:var(--green);color:#fff;padding:16px 18px;display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+  .big .lbl{font-size:12px;opacity:.85}
+  .big .val{font-size:26px;font-weight:700;margin-top:2px}
+  .big.main .val{font-size:34px}
+  .perg{margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:700}
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--line)}
+  @media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .stat{padding:12px 14px;border-right:1px solid var(--line)}
+  .stat:last-child{border-right:none}
+  .stat .lbl{font-size:12px;color:var(--muted)}
+  .stat .val{font-size:17px;font-weight:700;margin-top:3px}
+  .stat.hl{background:var(--green-light)}
+  .stat.hl .val{color:var(--green)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead th{background:#f9fafb;color:var(--muted);font-weight:600;text-align:left;padding:9px 14px;border-bottom:1px solid var(--line)}
+  thead th:last-child,tbody td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+  tbody td{padding:9px 14px;border-bottom:1px solid #f1f2f4}
+  tbody td.formula{color:var(--muted);font-size:12px}
+  tbody tr.total-row{background:var(--green-light);font-weight:700}
+  tbody tr.total-row td{color:var(--green-dark)}
+  tbody tr.grand td{font-weight:700;font-size:14px}
+  tr.excl td{color:#9ca3af}
+  .note{margin:10px 14px 14px;background:var(--amber-bg);border:1px solid #fde68a;color:var(--amber);font-size:12px;padding:8px 12px;border-radius:8px;line-height:1.6}
+  .actions{display:flex;gap:10px;margin:14px 0 4px;flex-wrap:wrap}
+  button.btn{background:var(--green);color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer}
+  button.btn:hover{background:var(--green-dark)}
+  button.btn.ghost{background:#fff;color:var(--green);border:1px solid var(--green)}
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s}
+  .toast.show{opacity:.92}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>3D打印报价计算器</h1>
+      <div class="sub">输入产品配置、生产数量和日出产量，系统会综合固定成本与每日利润摊销给出元件报价。</div>
+    </div>
+    <div class="badges">
+      <div class="badge">电费 <b id="badgeElec">¥1.00</b>/天</div>
+      <div class="badge">设备折旧 <b id="badgeDep">¥3.90</b>/天</div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- ============ 左：报价参数 ============ -->
+    <div class="card form-card">
+      <h2>报价参数</h2>
+
+      <div class="sec-title">产品与产量</div>
+      <div class="frow">
+        <div class="field"><label>单件重量（g/件）</label><input type="number" id="w" value="44" step="0.1"></div>
+        <div class="field"><label>生产数量（件）</label><input type="number" id="qty" value="144000" step="1"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>单台设备日产量（g/天）</label><input type="number" id="daily" value="370" step="1"></div>
+        <div class="field"><label>设备数量（台）</label><input type="number" id="mach" value="700" step="1"></div>
+      </div>
+      <div class="frow one">
+        <div class="field"><label>材料类型</label>
+          <select id="mat">
+            <option value="0.029" selected>PLA</option>
+            <option value="0.035">ABS</option>
+            <option value="0.042">PETG</option>
+            <option value="0.055">TPU</option>
+            <option value="0.068">PETG-CF / 碳纤增强</option>
+            <option value="0.15">光固化树脂</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>耗材单价（¥/g，可改）</label><input type="number" id="price" value="0.029" step="0.001"></div>
+        <div class="field"><label>每人可管理设备数（台）</label><input type="number" id="perOp" value="100" step="1"></div>
+      </div>
+
+      <div class="sec-title">电力与设备折旧</div>
+      <div class="frow">
+        <div class="field"><label>单台耗电（度/天）</label><input type="number" id="kwh" value="2" step="0.1"></div>
+        <div class="field"><label>电价（元/度）</label><input type="number" id="elecP" value="0.5" step="0.01"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>设备单价（元/台）</label><input type="number" id="devP" value="1300" step="1"></div>
+        <div class="field"><label>设备寿命（小时）</label><input type="number" id="devH" value="8000" step="100"></div>
+      </div>
+
+      <div class="sec-title">周期性维护摊销</div>
+      <div class="frow">
+        <div class="field"><label>维护费（元/次）</label><input type="number" id="m1" value="35" step="1"></div>
+        <div class="field"><label>维护更换周期（天）</label><input type="number" id="m1d" value="90" step="1"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>热端耗材价（元）</label><input type="number" id="m2" value="100" step="1"></div>
+        <div class="field"><label>热处理更换周期（天）</label><input type="number" id="m2d" value="360" step="1"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>内存卡价（元）</label><input type="number" id="m3" value="20" step="1"></div>
+        <div class="field"><label>内存卡更换周期（天）</label><input type="number" id="m3d" value="90" step="1"></div>
+      </div>
+
+      <div class="sec-title">人工与场地</div>
+      <div class="frow">
+        <div class="field"><label>人工费（元/月）</label><input type="number" id="labor" value="5000" step="100"></div>
+        <div class="field"><label>每月天数（天）</label><input type="number" id="mDays" value="30" step="1"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>场地租金（元/月）</label><input type="number" id="rent" value="0" step="100"></div>
+        <div class="field"><label>场地租期（天）</label><input type="number" id="rentD" value="360" step="1"></div>
+      </div>
+
+      <div class="sec-title">物流与利润</div>
+      <div class="frow">
+        <div class="field"><label>运输费率（元/g）</label><input type="number" id="ship" value="0.001" step="0.0001"></div>
+        <div class="field"><label>包装费率（元/g）</label><input type="number" id="pack" value="0.00057" step="0.00001"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>单台设备日利润（元/天）</label><input type="number" id="profitD" value="10" step="0.5"></div>
+        <div class="field"><label>损耗率（%）</label><input type="number" id="loss" value="5" step="0.5"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>加急费用（元，整单）</label><input type="number" id="rush" value="0" step="100"></div>
+        <div class="field"><label>手工费率（元/件）</label><input type="number" id="hand" value="0" step="0.1"></div>
+      </div>
+      <div class="hint">手工费用仅作展示，不计入报价；单台日折旧 = 设备单价 ÷ 寿命小时 × 24h。</div>
+    </div>
+
+    <!-- ============ 右：报价结果 ============ -->
+    <div class="card result-card">
+      <div class="rhead">
+        <div class="big"><div class="lbl">单件报价</div><div class="val" id="unit">¥3.53</div></div>
+        <div class="big main"><div class="lbl">总价</div><div class="val" id="total">¥508,674.26</div></div>
+        <div class="perg" id="perg">¥0.0803 / g</div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="lbl">需求量</div><div class="val" id="sTotal">6336000g</div></div>
+        <div class="stat"><div class="lbl">预计交货</div><div class="val" id="sDays">24.5天</div></div>
+        <div class="stat hl"><div class="lbl">产品总成本</div><div class="val" id="sCost">¥337,431.01</div></div>
+        <div class="stat hl"><div class="lbl">利润金额</div><div class="val" id="sProfit">¥171,243.24</div></div>
+        <div class="stat"><div class="lbl">单件成本 /g</div><div class="val" id="sUnitCost">¥0.0533 /g</div></div>
+      </div>
+
+      <table>
+        <thead><tr><th style="width:26%">项目</th><th>计算方式</th><th style="width:22%">金额</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+
+      <div class="note" id="note">总计/g（产品总成本 + 5%利润率）× 产品总量，不含税和运费；如需税费可再计算开具。手工费率不计入报价。</div>
+
+      <div class="actions" style="padding:0 14px 14px">
+        <button class="btn" id="btnCopy">复制报价</button>
+        <button class="btn ghost" id="btnReset">恢复默认</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">已复制到剪贴板</div>
+
+<script>
+const DEFAULTS = {w:44,qty:144000,daily:370,mach:700,price:0.029,perOp:100,kwh:2,elecP:0.5,devP:1300,devH:8000,m1:35,m1d:90,m2:100,m2d:360,m3:20,m3d:90,labor:5000,mDays:30,rent:0,rentD:360,ship:0.001,pack:0.00057,profitD:10,loss:5,rush:0,hand:0};
+const $ = id => document.getElementById(id);
+const num = id => { const v = parseFloat($(id).value); return isFinite(v) ? v : 0; };
+const fmt = n => '¥' + n.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtN = n => n.toLocaleString('zh-CN',{maximumFractionDigits:2});
+
+function calc(){
+  const w=num('w'), qty=num('qty'), daily=num('daily'), mach=num('mach'), price=num('price');
+  const totalG = w*qty;
+  const dailyG = daily*mach;                     // 总日产能 g/天
+  const days = dailyG>0 ? totalG/dailyG : 0;     // 预计交货天数
+
+  const elecPerDay = num('kwh')*num('elecP');    // 单台日电费
+  const depPerDay  = num('devH')>0 ? num('devP')/num('devH')*24 : 0; // 单台日折旧
+
+  const rows = [];
+  const add = (name,formula,amt,cls='') => rows.push({name,formula,amt,cls});
+
+  const mat  = price*totalG;
+  const ship = num('ship')*totalG;
+  const pack = num('pack')*totalG;
+  const elec = elecPerDay*mach*days;
+  const dep  = depPerDay*mach*days;
+  const m1   = num('m1d')>0 ? num('m1')/num('m1d')*mach*days : 0;
+  const m2   = num('m2d')>0 ? num('m2')/num('m2d')*mach*days : 0;
+  const m3   = num('m3d')>0 ? num('m3')/num('m3d')*mach*days : 0;
+  const labor= num('mDays')>0 ? num('labor')/num('mDays')*(num('perOp')>0?mach/num('perOp'):0)*days : 0;
+  const rent = num('rentD')>0 ? num('rent')*days/num('rentD') : 0;
+
+  const matName = $('mat').options[$('mat').selectedIndex].text;
+  add(matName+'材料成本', price.toFixed(4)+'元/g × '+fmtN(totalG)+'g', mat);
+  add('运输成本', num('ship').toFixed(5)+'元/g', ship);
+  add('包装成本', num('pack').toFixed(5)+'元/g', pack);
+  add('每日电费', '¥'+elecPerDay.toFixed(2)+' /台/天 × '+fmtN(mach)+'台 × '+days.toFixed(1)+'天', elec);
+  add('设备折旧', '¥'+depPerDay.toFixed(2)+' /台/天 × '+fmtN(mach)+'台 × '+days.toFixed(1)+'天', dep);
+  add('耗材维护', '¥'+num('m1').toFixed(2)+' / '+num('m1d')+'天 / 台', m1);
+  add('热端维护', '¥'+num('m2').toFixed(2)+' / '+num('m2d')+'天 / 台', m2);
+  add('内存卡维护', '¥'+num('m3').toFixed(2)+' / '+num('m3d')+'天 / 台', m3);
+  add('人工成本', '¥'+(num('labor')/Math.max(num('mDays'),1)).toFixed(2)+' × '+fmtN(mach)+'台 ÷ '+fmtN(num('perOp'))+'台/人', labor);
+  add('场地租金', '¥'+num('rent').toFixed(2)+' × '+days.toFixed(1)+'天 ÷ '+num('rentD')+'天', rent);
+
+  const lossR = num('loss')/100;
+  const sub = mat+ship+pack+elec+dep+m1+m2+m3+labor+rent;
+  const lossAmt = sub*lossR;
+  add('损耗'+num('loss')+'%', '成本小计 × '+num('loss')+'%', lossAmt);
+
+  const cost = sub*(1+lossR);                 // 产品总成本
+  const profit = num('profitD')*mach*days;    // 利润
+  const rush = num('rush');
+  add('单台设备日利润', '¥'+num('profitD').toFixed(2)+' / 370g基准 × '+fmtN(mach)+'台 × '+days.toFixed(1)+'天', profit);
+
+  const hand = num('hand')*qty;               // 不计入报价
+  add('加急费用', '按需填写', rush);
+  add('可选手工费用（不计入报价）', '¥'+num('hand').toFixed(2)+' × '+fmtN(qty)+'件', hand, 'excl');
+
+  const total = cost + profit + rush;
+  add('产品总成本', '成本小计 + 损耗', cost, 'total-row');
+  add('报价总计', '产品总成本 + 利润 + 加急', total, 'grand total-row');
+
+  // 渲染表格
+  $('rows').innerHTML = rows.map(r =>
+    '<tr class="'+r.cls+'"><td>'+r.name+'</td><td class="formula">'+r.formula+'</td><td>'+fmt(r.amt)+'</td></tr>'
+  ).join('');
+
+  // 顶部与统计
+  $('badgeElec').textContent = '¥'+elecPerDay.toFixed(2);
+  $('badgeDep').textContent  = '¥'+depPerDay.toFixed(2);
+  $('unit').textContent  = qty>0 ? fmt(total/qty) : '—';
+  $('total').textContent = fmt(total);
+  $('perg').textContent  = totalG>0 ? '¥'+(total/totalG).toFixed(4)+' / g' : '—';
+  $('sTotal').textContent  = fmtN(totalG)+'g';
+  $('sDays').textContent   = days.toFixed(1)+'天';
+  $('sCost').textContent   = fmt(cost);
+  $('sProfit').textContent = fmt(profit);
+  $('sUnitCost').textContent = totalG>0 ? '¥'+(cost/totalG).toFixed(4)+' /g' : '—';
+  $('note').textContent = '总计 = （成本小计 + '+num('loss')+'%损耗）+ 利润 + 加急，不含税；人工按每人管理 '+fmtN(num('perOp'))+'台折算。手工费率不计入报价。';
+
+  return {totalG,days,cost,profit,total,rows};
+}
+
+// 材料选择联动单价
+$('mat').addEventListener('change',()=>{ $('price').value = $('mat').value; calc(); });
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input',calc));
+
+$('btnReset').addEventListener('click',()=>{
+  for(const k in DEFAULTS) $(k).value = DEFAULTS[k];
+  $('mat').value = '0.029'; calc();
+});
+
+$('btnCopy').addEventListener('click',()=>{
+  const r = calc();
+  let txt = '【3D打印报价】\n单件报价：'+$('unit').textContent+'\n总价：'+$('total').textContent
+    +'\n需求量：'+fmtN(r.totalG)+'g\n预计交货：'+r.days.toFixed(1)+'天\n产品总成本：'+fmt(r.cost)
+    +'\n利润金额：'+fmt(r.profit)+'\n\n成本明细：\n'
+    + r.rows.map(x=>'· '+x.name+'：'+fmt(x.amt)+'（'+x.formula+'）').join('\n');
+  navigator.clipboard.writeText(txt).then(()=>{
+    const t=$('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600);
+  });
+});
+
+calc();
+</script>
+</body>
+</html>
