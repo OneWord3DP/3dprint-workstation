@@ -4,20 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3D耗材资料 · 3D打印工作站</title>
-
 <style>
-  :root{
-    --hero:#0e6b46; --hero-ink:#ffffff; --bg:#f3f4f6; --card:#ffffff;
-    --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --green:#0e6b46; --green-light:#e7f3ee;
-  }
-  body[data-theme="dark"]{
-    --hero:#14201b; --hero-ink:#e8efeb; --bg:#0f1512; --card:#161d1a;
-    --ink:#e8efeb; --muted:#8fa39a; --line:#2a3530; --green:#22c07d; --green-light:rgba(34,192,125,.12);
-  }
-  body[data-theme="sepia"]{
-    --hero:#7a5c2e; --hero-ink:#fffdf7; --bg:#f4eee1; --card:#fffdf7;
-    --ink:#3d3323; --muted:#8c7f66; --line:#e6dcc6; --green:#8a6524; --green-light:#f3ead6;
-  }
+  :root{--hero:#0e6b46;--hero-ink:#fff;--bg:#f3f4f6;--card:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--green:#0e6b46;--green-light:#e7f3ee}
+  body[data-theme="dark"]{--hero:#14201b;--hero-ink:#e8efeb;--bg:#0f1512;--card:#161d1a;--ink:#e8efeb;--muted:#8fa39a;--line:#2a3530;--green:#22c07d;--green-light:rgba(34,192,125,.12)}
+  body[data-theme="sepia"]{--hero:#7a5c2e;--hero-ink:#fffdf7;--bg:#f4eee1;--card:#fffdf7;--ink:#3d3323;--muted:#8c7f66;--line:#e6dcc6;--green:#8a6524;--green-light:#f3ead6}
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;transition:background .25s,color .25s}
   header{background:var(--hero);color:var(--hero-ink);padding:12px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -40,7 +30,8 @@
   .toolbar input{flex:1;min-width:200px}
   .toolbar input:focus,.toolbar select:focus{border-color:var(--green)}
   .count{font-size:12px;color:var(--muted);margin-bottom:8px}
-  
+  .edit-tip{display:none;background:var(--green-light);border:1px solid var(--green);color:var(--green);border-radius:10px;padding:9px 13px;margin-bottom:10px;font-size:12.5px;line-height:1.7}
+  body.editing .edit-tip{display:block}
   details.note{background:var(--green-light);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:12.5px;line-height:1.9;color:var(--ink)}
   details.note summary{cursor:pointer;font-weight:600;color:var(--green)}
   .tblcard{background:var(--card);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);overflow:auto;max-height:calc(100vh - 340px)}
@@ -49,19 +40,38 @@
   tbody td{padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top;white-space:pre-line;word-break:break-all;max-width:10em}
   tbody td a{color:var(--green);word-break:break-all}
   tbody tr:hover td{background:var(--green-light)}
-  
+  body.editing td[contenteditable]:focus{outline:2px solid var(--green);background:var(--card)}
+  body.editing td[contenteditable]{cursor:text}
   td.brand-cell{font-weight:700;white-space:nowrap}
   td.rate-cell{white-space:nowrap;font-weight:700;text-align:center}
   td.center{text-align:center}
   td.c-grey{color:var(--muted)}
   .empty{padding:40px;text-align:center;color:var(--muted);font-size:13px;display:none}
   .credit{text-align:center;color:var(--muted);font-size:11.5px;padding:10px 0 18px}
-  
-  @media(max-width:640px){ .tblcard{max-height:none} }
+  .modal{position:fixed;inset:0;background:rgba(15,23,20,.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:120}
+  .modal.show{display:flex}
+  .mcard{background:var(--card);border-radius:14px;padding:20px;width:720px;max-width:100%;max-height:86vh;display:flex;flex-direction:column;gap:10px}
+  .mcard h3{font-size:15px}
+  .mcard .steps{font-size:12.5px;color:var(--muted);line-height:1.8}
+  .mcard textarea{flex:1;min-height:260px;font-family:Consolas,monospace;font-size:11.5px;border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--bg);color:var(--ink);resize:none}
+  .mcard .btns{display:flex;gap:8px;flex-wrap:wrap}
+  .mcard button{border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+  .mcard .p{background:var(--green);color:#fff}
+  .mcard .s{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+  .pcard{background:var(--card);border-radius:14px;padding:26px 28px;width:330px;max-width:92vw;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+  .pcard h3{font-size:15px;margin-bottom:4px}
+  .pcard .ps{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.7}
+  .pcard input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:var(--bg);color:var(--ink);outline:none}
+  .pcard input:focus{border-color:var(--green)}
+  .pcard .btns{display:flex;gap:8px;margin-top:12px}
+  .pcard .btns button{flex:1;padding:9px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+  .pcard .ok{background:var(--green);color:#fff}
+  .pcard .cc{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+  .perr{color:#dc2626;font-size:12px;margin-top:8px;display:none}
+  @media(max-width:640px){.tblcard{max-height:none}}
 </style>
 </head>
 <body data-theme="light">
-
 <header>
   <h1>📚 3D耗材资料</h1>
   <span class="sub" id="sub">加载中…</span>
@@ -72,12 +82,13 @@
     <button class="tbtn t-sepia" data-t="sepia" title="米色护眼"></button>
   </div>
   <div class="sp">
-    
+    <button class="hbtn" id="btnEdit">✏️ 编辑模式</button>
+    <button class="hbtn" id="btnExport" style="display:none">📤 导出JSON</button>
     <a class="hbtn" href="index.html">← 返回工作站</a>
   </div>
 </header>
 <div class="wrap">
-  
+  <div class="edit-tip">编辑模式已解锁：点击单元格直接修改，改完点右上「导出JSON」→ 复制 → 打开 <a href="https://github.com/OneWord3DP/3dprint-workstation/edit/main/%E8%80%97%E6%9D%90%E8%B5%84%E6%96%99.json" target="_blank" style="color:inherit">GitHub 上的 耗材资料.json</a> → 粘贴替换 → Commit，约1分钟后本站自动更新。购买链接/官网需增删时，在 JSON 的 l 字段按「列号+行号」修改。</div>
   <div class="toolbar">
     <input id="q" type="text" placeholder="搜索全表任意内容…">
     <select id="fType"><option value="">全部类型</option><option>一线</option><option>打印机厂</option><option>打印机厂商</option><option>其他</option></select>
@@ -86,17 +97,38 @@
   <details class="note"><summary>📋 评分规则与使用说明（来自原作者）</summary><div id="noteBox" style="white-space:pre-wrap"></div></details>
   <div class="count" id="count"></div>
   <div class="tblcard">
-    <table>
-      <thead id="thead"></thead>
-      <tbody id="tb"></tbody>
-    </table>
+    <table><thead id="thead"></thead><tbody id="tb"></tbody></table>
     <div class="empty" id="empty">没有匹配的记录</div>
   </div>
 </div>
-<div class="credit">数据来源：一言智造整理 · 由作者通过编辑入口维护 · 作者：一言智造 &amp; 千问办公</div>
+<div class="credit">数据来源：一言智造整理 · 页面运行时加载 耗材资料.json · 作者：一言智造 &amp; 千问办公</div>
+
+<div class="modal" id="pmodal">
+  <div class="pcard">
+    <h3>🔒 输入编辑密码</h3>
+    <div class="ps">仅作者可编辑。解锁后修改需导出 JSON 并提交到 GitHub 才会真正更新线上数据。</div>
+    <input id="pw" type="password" placeholder="编辑密码">
+    <div class="perr" id="perr">密码错误</div>
+    <div class="btns"><button class="cc" id="pcancel">取消</button><button class="ok" id="pok">确认解锁</button></div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="mcard">
+    <h3>📤 导出更新后的数据</h3>
+    <div class="steps">① 复制或下载下面的 JSON → ② 打开 <a href="https://github.com/OneWord3DP/3dprint-workstation/edit/main/%E8%80%97%E6%9D%90%E8%B5%84%E6%96%99.json" target="_blank" style="color:var(--green)">GitHub 上的 耗材资料.json</a> → ③ 全选粘贴替换 → Commit changes → 约1分钟后自动生效。</div>
+    <textarea id="out" readonly></textarea>
+    <div class="btns">
+      <button class="p" id="btnCopy">复制到剪贴板</button>
+      <button class="s" id="btnDl">下载 耗材资料.json</button>
+      <button class="s" id="btnClose">关闭</button>
+    </div>
+  </div>
+</div>
 
 <script>
-var DATA=null, editing=false;
+var DATA=null, editing=false, unlocked=false;
+var PWH='1f2de1a9da8bdf97c9a05793e08f5edbca9eacd0a2e259ba47fe963d01158968';
 function $(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function colLetter(i){var s='';i++;while(i>0){var m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=Math.floor((i-1)/26);}return s;}
@@ -139,12 +171,60 @@ function render(){
       if(u&&raw)content='<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(raw)+'</a>';
       else if(u&&!raw)content='<a href="'+esc(u)+'" target="_blank" rel="noopener">🔗链接</a>';
       var cls=i===3?' class="brand-cell"':(i===1?' class="rate-cell center"':(i===2?' class="center c-grey"':''));
-      tds+='<td'+cls+' data-idx="'+idx+'">'+content+'</td>';
+      var ce=(editing&&i!==11)?' contenteditable="true"':'';
+      tds+='<td'+cls+' data-idx="'+idx+'" data-i="'+i+'"'+ce+'>'+content+'</td>';
     }
     return '<tr>'+tds+'</tr>';
   }).join('');
-  
+  if(editing){
+    var tds=document.querySelectorAll('#tb td[contenteditable]');
+    for(var k=0;k<tds.length;k++){
+      tds[k].addEventListener('blur',function(e){
+        var idx=+e.target.dataset.idx,i=+e.target.dataset.i;
+        var t=e.target.textContent.trim();
+        DATA.rows[idx].r[i]=(t==='—'?'':t);
+      });
+    }
+  }
 }
+function setEdit(on){
+  editing=on;
+  document.body.classList.toggle('editing',on);
+  $('btnEdit').classList.toggle('act',on);
+  $('btnEdit').textContent=on?'✅ 编辑中（点此退出）':'✏️ 编辑模式';
+  $('btnExport').style.display=on?'inline-block':'none';
+  if(DATA)render();
+}
+function sha(t){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0');}).join('');});}
+function tryUnlock(){
+  sha($('pw').value).then(function(h){
+    if(h===PWH){unlocked=true;try{sessionStorage.setItem('hc_ed','1');}catch(e){}$('pmodal').classList.remove('show');setEdit(true);}
+    else{$('perr').style.display='block';$('pw').select();}
+  });
+}
+$('btnEdit').addEventListener('click',function(){
+  if(editing){setEdit(false);return;}
+  if(unlocked){setEdit(true);return;}
+  $('perr').style.display='none';$('pw').value='';$('pmodal').classList.add('show');setTimeout(function(){$('pw').focus();},50);
+});
+$('pcancel').addEventListener('click',function(){$('pmodal').classList.remove('show');});
+$('pok').addEventListener('click',tryUnlock);
+$('pw').addEventListener('keydown',function(e){if(e.key==='Enter')tryUnlock();});
+$('btnExport').addEventListener('click',function(){
+  var out={note:DATA.note,head:DATA.head,rows:DATA.rows.map(function(r){return {r:r.r,l:r.l||{}};})};
+  $('out').value=JSON.stringify(out);
+  $('modal').classList.add('show');
+});
+$('btnCopy').addEventListener('click',function(){
+  $('out').select();
+  try{navigator.clipboard.writeText($('out').value);}catch(e){document.execCommand('copy');}
+  $('btnCopy').textContent='✅ 已复制';setTimeout(function(){$('btnCopy').textContent='复制到剪贴板';},1500);
+});
+$('btnDl').addEventListener('click',function(){
+  var blob=new Blob([$('out').value],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='耗材资料.json';a.click();
+});
+$('btnClose').addEventListener('click',function(){$('modal').classList.remove('show');});
 fetch('耗材资料.json?t='+Date.now()).then(function(r){return r.json();}).then(function(d){
   DATA=d;
   DATA.rows.forEach(function(r){
@@ -154,12 +234,12 @@ fetch('耗材资料.json?t='+Date.now()).then(function(r){return r.json();}).the
   $('sub').textContent=DATA.rows.length+' 个品牌 · 表格严格对应原表（含原始链接）';
   $('noteBox').textContent=DATA.note||'';
   renderHead();render();
-  
-}).catch(function(e){ $('sub').textContent='数据加载失败：'+e.message; });
+  var st='';try{st=sessionStorage.getItem('hc_ed')||'';}catch(e){}
+  if(st==='1'){unlocked=true;}
+}).catch(function(e){$('sub').textContent='数据加载失败：'+e.message;});
 $('q').addEventListener('input',function(){if(DATA)render();});
 $('fType').addEventListener('change',function(){if(DATA)render();});
 $('fRate').addEventListener('change',function(){if(DATA)render();});
-
 var THEME_KEY='fdm_theme_v1';
 function applyTheme(t){
   document.body.dataset.theme=t;
