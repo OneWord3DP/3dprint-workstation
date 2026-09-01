@@ -68,6 +68,7 @@
   .pcard .ok{background:var(--green);color:#fff}
   .pcard .cc{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
   .perr{color:#dc2626;font-size:12px;margin-top:8px;display:none}
+  #dirtyBadge{background:#dc2626;color:#fff;border-color:#dc2626;cursor:default}
   @media(max-width:640px){.tblcard{max-height:none}}
 </style>
 </head>
@@ -84,11 +85,13 @@
   <div class="sp">
     <button class="hbtn" id="btnEdit">✏️ 编辑模式</button>
     <button class="hbtn" id="btnExport" style="display:none">📤 导出JSON</button>
+    <span class="hbtn" id="dirtyBadge" style="display:none"></span>
+    <button class="hbtn" id="btnRevert" style="display:none">↺ 放弃本地修改</button>
     <a class="hbtn" href="index.html">← 返回工作站</a>
   </div>
 </header>
 <div class="wrap">
-  <div class="edit-tip">编辑模式已解锁：点击单元格直接修改，改完点右上「导出JSON」→ 复制 → 打开 <a href="https://github.com/OneWord3DP/3dprint-workstation/edit/main/%E8%80%97%E6%9D%90%E8%B5%84%E6%96%99.json" target="_blank" style="color:inherit">GitHub 上的 耗材资料.json</a> → 粘贴替换 → Commit，约1分钟后本站自动更新。购买链接/官网需增删时，在 JSON 的 l 字段按「列号+行号」修改。</div>
+  <div class="edit-tip">编辑模式已解锁：点击单元格直接修改，改动会自动存在本浏览器（刷新不丢）。要真正更新线上，点右上「导出JSON」→ 复制 → 打开 <a href="https://github.com/OneWord3DP/3dprint-workstation/edit/main/%E8%80%97%E6%9D%90%E8%B5%84%E6%96%99.json" target="_blank" style="color:inherit">GitHub 上的 耗材资料.json</a> → 粘贴替换 → Commit，约1分钟后本站自动更新。购买链接/官网需增删时，在 JSON 的 l 字段按「列号+行号」修改。</div>
   <div class="toolbar">
     <input id="q" type="text" placeholder="搜索全表任意内容…">
     <select id="fType"><option value="">全部类型</option><option>一线</option><option>打印机厂</option><option>打印机厂商</option><option>其他</option></select>
@@ -127,7 +130,8 @@
 </div>
 
 <script>
-var DATA=null, editing=false, unlocked=false;
+var DATA=null, ORIG=null, editing=false, unlocked=false;
+var LS='hc_edits_v1';
 var PWH='1f2de1a9da8bdf97c9a05793e08f5edbca9eacd0a2e259ba47fe963d01158968';
 function $(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -183,6 +187,7 @@ function render(){
         var idx=+e.target.dataset.idx,i=+e.target.dataset.i;
         var t=e.target.textContent.trim();
         DATA.rows[idx].r[i]=(t==='—'?'':t);
+        saveEdits();
       });
     }
   }
@@ -225,15 +230,27 @@ $('btnDl').addEventListener('click',function(){
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='耗材资料.json';a.click();
 });
 $('btnClose').addEventListener('click',function(){$('modal').classList.remove('show');});
+function saveEdits(){try{localStorage.setItem(LS,JSON.stringify(diffRows()));}catch(e){}updateBadge();}
+function diffRows(){var out={};ORIG.forEach(function(o,i){var d=[];for(var c=0;c<24;c++){if((DATA.rows[i].r[c]||'')!==(o[c]||''))d[c]=DATA.rows[i].r[c]||'';}if(d.length)out[i]=d;});return out;}
+function applyEdits(saved){var n=0;Object.keys(saved).forEach(function(i){var d=saved[i];Object.keys(d).forEach(function(c){if(DATA.rows[i]){DATA.rows[i].r[c]=d[c];n++;}});});return n;}
+function dirtyCount(){var s=diffRows(),n=0;Object.keys(s).forEach(function(i){n+=Object.keys(s[i]).length;});return n;}
+function updateBadge(){var n=dirtyCount();var b=$('dirtyBadge'),r=$('btnRevert');
+  if(n>0){b.style.display='inline-block';b.textContent='未提交修改 '+n+' 处';r.style.display='inline-block';}
+  else{b.style.display='none';r.style.display='none';}}
+$('btnRevert').addEventListener('click',function(){try{localStorage.removeItem(LS);}catch(e){}
+  ORIG.forEach(function(o,i){DATA.rows[i].r=o.slice();});updateBadge();render();});
 fetch('耗材资料.json?t='+Date.now()).then(function(r){return r.json();}).then(function(d){
   DATA=d;
   DATA.rows.forEach(function(r){
     var ks=Object.keys(r.l||{});
     if(ks.length){var m=ks[0].match(/(\d+)$/);r._row=m?+m[1]:0;}else r._row=0;
   });
-  $('sub').textContent=DATA.rows.length+' 个品牌 · 表格严格对应原表（含原始链接）';
+  ORIG=DATA.rows.map(function(r){return r.r.slice();});
+  var saved=null;try{saved=JSON.parse(localStorage.getItem(LS)||'null');}catch(e){}
+  var n=saved?applyEdits(saved):0;
+  $('sub').textContent=DATA.rows.length+' 个品牌 · 表格严格对应原表（含原始链接）'+(n>0?' · 已恢复本地未提交修改 '+n+' 处':'');
   $('noteBox').textContent=DATA.note||'';
-  renderHead();render();
+  renderHead();render();updateBadge();
   var st='';try{st=sessionStorage.getItem('hc_ed')||'';}catch(e){}
   if(st==='1'){unlocked=true;}
 }).catch(function(e){$('sub').textContent='数据加载失败：'+e.message;});
