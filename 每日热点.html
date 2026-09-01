@@ -7,15 +7,15 @@
 <style>
   :root{
     --hero:#0e6b46; --hero-ink:#ffffff; --bg:#f3f4f6; --card:#ffffff;
-    --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+    --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --green:#0e6b46; --green-light:#e7f3ee;
   }
   body[data-theme="dark"]{
     --hero:#14201b; --hero-ink:#e8efeb; --bg:#0f1512; --card:#161d1a;
-    --ink:#e8efeb; --muted:#8fa39a; --line:#2a3530;
+    --ink:#e8efeb; --muted:#8fa39a; --line:#2a3530; --green:#22c07d; --green-light:rgba(34,192,125,.12);
   }
   body[data-theme="sepia"]{
     --hero:#7a5c2e; --hero-ink:#fffdf7; --bg:#f4eee1; --card:#fffdf7;
-    --ink:#3d3323; --muted:#8c7f66; --line:#e6dcc6;
+    --ink:#3d3323; --muted:#8c7f66; --line:#e6dcc6; --green:#8a6524; --green-light:#f3ead6;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;transition:background .25s,color .25s}
@@ -31,84 +31,61 @@
   .tbtn.t-sepia{background:linear-gradient(135deg,#fffdf7 50%,#7a5c2e 50%)}
   header button.rf{font-size:12.5px;color:var(--hero-ink);background:rgba(128,128,128,.18);border:1px solid rgba(128,128,128,.4);padding:6px 14px;border-radius:99px;cursor:pointer;font-weight:600;font-family:inherit}
   header button.rf:hover{background:rgba(128,128,128,.32)}
+  header a.newwin{font-size:12.5px;color:var(--hero-ink);text-decoration:none;background:rgba(128,128,128,.18);border:1px solid rgba(128,128,128,.4);padding:6px 14px;border-radius:99px;font-weight:600}
+  header a.newwin:hover{background:rgba(128,128,128,.32)}
   header a.back{margin-left:auto;font-size:12.5px;color:var(--hero-ink);text-decoration:none;background:rgba(128,128,128,.18);border:1px solid rgba(128,128,128,.4);padding:6px 14px;border-radius:99px;font-weight:600}
   header a.back:hover{background:rgba(128,128,128,.32)}
   .stage{padding:12px 16px 8px}
   .frame-shell{background:var(--card);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.10);overflow:hidden}
-  iframe{width:100%;border:none;display:block;background:#fff}
-  .loading,.tip{text-align:center;color:var(--muted);font-size:13px;padding:50px 20px;line-height:1.9}
+  iframe{width:100%;height:calc(100vh - 120px);min-height:520px;border:none;display:block;background:#fff}
+  .tip{max-width:760px;margin:26px auto;text-align:center;color:var(--muted);font-size:12.5px;line-height:1.9;padding:0 20px}
   .credit{text-align:center;color:var(--muted);font-size:11.5px;padding:0 0 18px}
 </style>
 </head>
 <body data-theme="light">
 <header>
   <h1>📰 3D打印每日热点</h1>
-  <span class="date" id="meta">加载中…</span>
+  <span class="date" id="meta">每天 09:00 自动生成并同步</span>
   <div class="theme-pick">
     <span class="tl">主题</span>
     <button class="tbtn t-light on" data-t="light" title="浅色绿"></button>
     <button class="tbtn t-dark" data-t="dark" title="深色"></button>
     <button class="tbtn t-sepia" data-t="sepia" title="米色护眼"></button>
   </div>
-  <button class="rf" onclick="load()">↻ 刷新</button>
+  <button class="rf" onclick="reload()">↻ 刷新</button>
+  <a class="newwin" href="https://oneword3dp.github.io/3dprint-workstation/daily-report.html" target="_blank" rel="noopener">↗ 新窗口打开</a>
   <a class="back" href="index.html">← 返回工作站</a>
 </header>
 <div class="stage">
-  <div class="loading" id="loading">正在加载最新报告…</div>
-  <div class="frame-shell" id="shell" style="display:none"><iframe id="frame" title="每日热点报告"></iframe></div>
-  <div class="tip" id="empty" style="display:none">暂无报告，等今天的《每日3D打印动态》任务跑完后再来看看～</div>
+  <div class="frame-shell">
+    <iframe id="frame" src="https://oneword3dp.github.io/3dprint-workstation/daily-report.html" title="每日热点报告"></iframe>
+  </div>
+  <div class="tip" id="tip" style="display:none">若上方空白，说明今天的日报还在生成中（每天 09:00 自动跑），或浏览器拦截了内嵌内容，点右上角「新窗口打开」即可查看。</div>
 </div>
-<div class="credit">作者：一言智造 &amp; 千问办公</div>
+<div class="credit">数据源：GitHub 主版本仓库，每日自动更新 · 作者：一言智造 &amp; 千问办公</div>
 <script>
-const $=id=>document.getElementById(id);
-
-// ---- 主题（与工作站首页共用同一份选择） ----
-const THEME_KEY='fdm_theme_v1';
+var SRC='https://oneword3dp.github.io/3dprint-workstation/daily-report.html';
+function reload(){
+  var f=document.getElementById('frame');
+  f.src=SRC+'?t='+Date.now();
+  document.getElementById('meta').textContent='已刷新 · '+new Date().toLocaleTimeString('zh-CN',{hour12:false});
+}
+var THEME_KEY='fdm_theme_v1';
 function applyTheme(t){
   document.body.dataset.theme=t;
-  document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  document.querySelectorAll('.tbtn').forEach(function(b){b.classList.toggle('on',b.dataset.t===t);});
   try{localStorage.setItem(THEME_KEY,t);}catch(e){}
 }
-document.querySelectorAll('.tbtn').forEach(b=>b.addEventListener('click',()=>applyTheme(b.dataset.t)));
-try{const saved=localStorage.getItem(THEME_KEY);if(saved)applyTheme(saved);}catch(e){}
-
-// ---- 图片兜底：加载失败→白底黑字“一言智造” ----
-const FALLBACK =
-'<script>'+
-'document.addEventListener("error",function(e){'+
-'var t=e.target;if(t&&t.tagName==="IMG"&&!t.dataset.fbk){t.dataset.fbk=1;'+
-'var d=document.createElement("div");'+
-'d.style.cssText="background:#fff;color:#111;text-align:center;padding:26px 10px;font-size:14px;font-weight:600;font-family:PingFang SC,Microsoft YaHei,sans-serif;border:1px solid #e5e7eb;border-radius:8px;letter-spacing:1px";'+
-'d.textContent="一言智造";t.replaceWith(d);}},true);'+
-'<\/script>';
-
-function fit(){
-  const f=$('frame');
-  try{ f.style.height=(f.contentDocument.documentElement.scrollHeight+40)+'px'; }catch(e){ f.style.height='80vh'; }
-}
-async function load(){
-  $('loading').style.display='block';$('shell').style.display='none';$('empty').style.display='none';
+document.querySelectorAll('.tbtn').forEach(function(b){b.addEventListener('click',function(){applyTheme(b.dataset.t);});});
+try{var sv=localStorage.getItem(THEME_KEY);if(sv)applyTheme(sv);}catch(e){}
+setTimeout(function(){
   try{
-    const r=await fetch('daily-report.html?t='+Date.now());
-    if(!r.ok) throw 0;
-    let html=await r.text();
-    const m=html.match(/<title>([^<]*)<\/title>/i);
-    $('meta').textContent=(m?m[1]:'3D打印每日热点')+' · 更新于 '+new Date().toLocaleString('zh-CN',{hour12:false});
-    // 注入图片兜底（有 </body> 就插到前面，否则附加到末尾）
-    if(/<\/body>/i.test(html)) html=html.replace(/<\/body>/i, FALLBACK+'</body>');
-    else html+=FALLBACK;
-    $('loading').style.display='none';
-    $('shell').style.display='block';
-    const f=$('frame');
-    f.srcdoc=html;
-    f.onload=()=>{fit();setTimeout(fit,800);setTimeout(fit,2500);};
-  }catch(e){
-    $('loading').style.display='none';
-    $('empty').style.display='block';
-    $('meta').textContent='暂无报告';
-  }
-}
-load();
+    var f=document.getElementById('frame');
+    var ok=false;
+    try{ok=!!(f.contentDocument&&f.contentDocument.body&&f.contentDocument.body.innerHTML.trim());}catch(e){ok=true;}
+    if(!ok)document.getElementById('tip').style.display='block';
+  }catch(e){}
+},5000);
 </script>
 </body>
 </html>
