@@ -97,6 +97,11 @@ body[data-theme="dark"] .hero-art{background:linear-gradient(150deg,#122c52,#1b3
 .hero-svg .pulse{animation:pulseDot 2.2s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
 @keyframes extdash{to{stroke-dashoffset:-18}}
 @keyframes pulseDot{0%,100%{opacity:.5}50%{opacity:1}}
+.hero-art-link{display:block;position:relative;border-radius:24px;transition:transform .18s cubic-bezier(.2,.8,.3,1)}
+.hero-art-link:hover{transform:translateY(-3px)}
+.hero-art-link:hover .hero-art{box-shadow:0 30px 70px rgba(8,20,50,.42)}
+.art-go{position:absolute;top:14px;left:16px;z-index:3;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;box-shadow:0 6px 16px rgba(0,0,0,.18);transition:background .15s}
+.hero-art-link:hover .art-go{background:rgba(255,255,255,.26)}
 
 /* ===== 功能卡片 ===== */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(182px,1fr));gap:16px;padding:6px 0 4px}
@@ -104,6 +109,8 @@ body[data-theme="dark"] .hero-art{background:linear-gradient(150deg,#122c52,#1b3
 .fcard:hover{transform:translateY(-5px);box-shadow:var(--shadow-m)}
 .fcard .wm{position:absolute;top:14px;right:16px;font-family:Georgia,serif;font-style:italic;font-weight:700;font-size:42px;line-height:1;opacity:.13;color:var(--ink);pointer-events:none;user-select:none}
 .fcard .fic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:23px;margin-bottom:14px;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.14)}
+.fcard .cover{position:absolute;inset:0;z-index:1;border-radius:inherit}
+.fcard .fic,.fcard h3,.fcard p{position:relative;z-index:0}
 .fcard h3{font-size:17px;font-weight:800;margin-bottom:8px;letter-spacing:-.3px}
 .fcard p{font-size:12.8px;color:var(--muted);line-height:1.6;flex:1}
 .fcard .go{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;color:#fff;font-size:15px;margin-top:14px;transition:transform .18s;align-self:flex-end}
@@ -204,6 +211,7 @@ footer{margin-top:48px;border-top:1px solid var(--line);background:var(--card)}
   .avatar{display:none}
   .hero h1{font-size:27px}
   .hero .tag{font-size:16px}
+  .art-go{font-size:11px;padding:5px 10px;top:12px;left:12px}
   .cards{grid-template-columns:1fr}
   .fav-grid{grid-template-columns:1fr}
   .art-tag{display:none}
@@ -257,9 +265,10 @@ footer{margin-top:48px;border-top:1px solid var(--line);background:var(--card)}
             <a class="btn btn-ghost" href="history.html">🕘 热点存档</a>
           </div>
         </div>
-        <div class="hero-art" data-reveal aria-hidden="true">
+        <a class="hero-art-link" href="daily-hotspots.html" title="打开国内每日热点" aria-label="打开国内每日热点">
+        <div class="hero-art" data-reveal>
           <div class="art-cube">⬡</div>
-          <svg class="hero-svg" viewBox="0 0 360 252" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="3D打印机插画">
+          <svg class="hero-svg" viewBox="0 0 360 252" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <circle cx="26" cy="48" r="3" fill="#7ee0c4" opacity=".8"/>
             <circle cx="318" cy="40" r="3" fill="#9ecbff"/>
             <circle cx="326" cy="112" r="2.5" fill="#7ee0c4" class="pulse"/>
@@ -287,12 +296,15 @@ footer{margin-top:48px;border-top:1px solid var(--line);background:var(--card)}
             <rect x="156" y="164" width="52" height="9" rx="4.5" fill="rgba(255,255,255,.32)"/>
           </svg>
           <div class="art-tag">ONE·3DP WORKSTATION</div>
+          <span class="art-go">📰 国内每日热点 →</span>
         </div>
+        </a>
       </div>
 
       <!-- 功能卡片 -->
       <div class="cards">
         <div class="fcard blue" data-reveal>
+          <a class="cover" href="daily-hotspots.html" aria-label="国内每日热点"></a>
           <span class="wm">NEWS</span>
           <div class="fic">📰</div>
           <h3>每日热点</h3>
