@@ -3,291 +3,406 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3D打印工作站</title>
+<title>一言智造 One3DP · 3D打印工作站</title>
 <style>
   :root{
-    --bg:#f3f4f6; --card:#ffffff; --hero:#0e6b46; --hero-ink:#ffffff;
-    --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
-    --green:#0e6b46; --green-dark:#0a5237; --green-light:#e7f3ee;
-    --hover:#e7f3ee; --shadow:0 1px 3px rgba(0,0,0,.08);
+    --bg:#f5f7fa; --card:#ffffff; --ink:#1a1d23; --muted:#6b7280; --line:#e8ecf1;
+    --blue:#2563eb; --blue-dark:#1d4ed8; --blue-light:#eff6ff;
+    --green:#059669; --green-light:#ecfdf5;
+    --purple:#7c3aed; --purple-light:#f5f3ff;
+    --orange:#ea580c; --orange-light:#fff7ed;
+    --pink:#db2777; --pink-light:#fdf2f8;
+    --shadow-sm:0 1px 3px rgba(0,0,0,.06);
+    --shadow-md:0 4px 16px rgba(0,0,0,.08);
+    --shadow-lg:0 8px 30px rgba(0,0,0,.12);
   }
   body[data-theme="dark"]{
-    --bg:#0f1512; --card:#161d1a; --hero:#14201b; --hero-ink:#e8efeb;
-    --ink:#e8efeb; --muted:#8fa39a; --line:#2a3530;
-    --green:#22c07d; --green-dark:#2bd48c; --green-light:rgba(34,192,125,.12);
-    --hover:rgba(34,192,125,.10); --shadow:0 1px 3px rgba(0,0,0,.4);
-  }
-  body[data-theme="sepia"]{
-    --bg:#f4eee1; --card:#fffdf7; --hero:#7a5c2e; --hero-ink:#fffdf7;
-    --ink:#3d3323; --muted:#8c7f66; --line:#e6dcc6;
-    --green:#8a6524; --green-dark:#6e5119; --green-light:#f3ead6;
-    --hover:#f3ead6; --shadow:0 1px 3px rgba(122,92,46,.12);
+    --bg:#0d1117; --card:#161b22; --ink:#e6edf3; --muted:#8b949e; --line:#30363d;
+    --blue:#58a6ff; --blue-light:rgba(56,139,253,.15);
+    --green:#3fb950; --green-light:rgba(63,185,80,.15);
+    --purple:#bc8cff; --purple-light:rgba(188,140,255,.15);
+    --orange:#f0883e; --orange-light:rgba(240,136,62,.15);
+    --pink:#f778ba; --pink-light:rgba(247,120,186,.15);
+    --shadow-sm:0 1px 3px rgba(0,0,0,.3);
+    --shadow-md:0 4px 16px rgba(0,0,0,.4);
+    --shadow-lg:0 8px 30px rgba(0,0,0,.5);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);transition:background .25s,color .25s;padding-bottom:60px}
-  .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
-  /* ---- 顶部 ---- */
-  .hero{background:var(--hero);color:var(--hero-ink);border-radius:0 0 14px 14px;padding:16px 22px}
-  .hero .row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-  .hero h1{font-size:19px;letter-spacing:1px}
-  .hero .clock{margin-left:auto;text-align:right}
-  .hero .clock .time{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
-  .hero .clock .date{font-size:11.5px;opacity:.85}
-  .theme-pick{display:flex;gap:6px;align-items:center}
-  .theme-pick .tl{font-size:11.5px;opacity:.8;margin-right:2px}
-  .tbtn{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.55);cursor:pointer;padding:0}
-  .tbtn.on{border-color:#fff;outline:2px solid rgba(255,255,255,.35)}
-  .tbtn.t-light{background:linear-gradient(135deg,#ffffff 50%,#0e6b46 50%)}
-  .tbtn.t-dark{background:linear-gradient(135deg,#161d1a 50%,#22c07d 50%)}
-  .tbtn.t-sepia{background:linear-gradient(135deg,#fffdf7 50%,#7a5c2e 50%)}
-  /* ---- 搜索 ---- */
-  .searchbar{display:flex;gap:8px;margin:16px 0 14px;flex-wrap:wrap}
-  .searchbar input{flex:1;min-width:240px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 16px;font-size:14px;color:var(--ink);outline:none;box-shadow:var(--shadow)}
-  .searchbar input:focus{border-color:var(--green)}
-  .eng{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 18px;font-size:13px;color:var(--muted);cursor:pointer;font-weight:500}
-  .eng.on{border-color:var(--green);color:var(--green);font-weight:600;background:var(--green-light)}
-  /* ---- 常用工具 ---- */
-  .quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px}
-  .qt{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 15px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow);transition:transform .12s,border-color .12s}
-  .qt:hover{transform:translateY(-2px);border-color:var(--green)}
-  .qt .ic{font-size:20px;width:42px;height:42px;background:var(--green-light);border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
-  .qt .n{font-size:13.5px;font-weight:600}
-  .qt .d{font-size:11px;color:var(--muted);margin-top:1px}
-  /* ---- 吸顶导航 ---- */
-  .navbar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);padding:8px 0;border-bottom:1px solid var(--line)}
-  .navbar .inner{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-  .navbar a{font-size:12.5px;color:var(--muted);text-decoration:none;padding:5px 12px;border-radius:99px}
-  .navbar a:hover{color:var(--green);background:var(--green-light)}
-  /* ---- 卡片 ---- */
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0 6px}
-  @media(max-width:960px){.grid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:640px){.grid{grid-template-columns:1fr}}
-  .cat{background:var(--card);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow)}
-  .cat.wide{grid-column:span 2}
-  .cat.accent{background:#fff8e6;border:1px solid #f0e2bd}
-  body[data-theme="dark"] .cat.accent{background:#211d12;border-color:#3a3320}
-  body[data-theme="sepia"] .cat.accent{background:#f7ecd2;border-color:#e0d3a8}
-  @media(max-width:960px){.cat.wide{grid-column:span 2}}
-  @media(max-width:640px){.cat.wide{grid-column:span 1}}
-  .cat h3{font-size:14.5px;display:flex;align-items:center;gap:7px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--line)}
-  .cat h3 .tag{font-size:10px;font-weight:400;color:var(--green);background:var(--green-light);border-radius:4px;padding:2px 6px;margin-left:auto}
-  ul.links{list-style:none}
-  ul.links li{margin:0}
-  ul.links a{display:flex;align-items:center;gap:9px;padding:6.5px 8px;border-radius:8px;text-decoration:none;color:var(--ink);font-size:13px}
-  ul.links a:hover{background:var(--hover)}
-  ul.links a:hover .name{color:var(--green)}
-  ul.links.two{display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
-  @media(max-width:640px){ul.links.two{grid-template-columns:1fr}}
-  ul.links.two .desc{display:none}
-  .av{width:22px;height:22px;border-radius:6px;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;opacity:.92}
-  .name{font-weight:500}
-  .desc{font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:118px}
-  /* ---- 待办 ---- */
-  .todo li{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:8px;font-size:13px}
-  .todo li:hover{background:var(--hover)}
-  .todo input{width:15px;height:15px;accent-color:var(--green);cursor:pointer;flex:none}
-  .todo li.done span{color:var(--muted);text-decoration:line-through}
-  .todo .t-desc{font-size:11px;color:var(--muted);margin-left:auto}
-  footer{margin-top:24px;font-size:11.5px;color:var(--muted);text-align:center}
-  .top-btn{position:fixed;right:22px;bottom:26px;width:42px;height:42px;border-radius:50%;background:var(--green);color:var(--hero-ink);border:none;font-size:18px;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:opacity .25s;z-index:99}
+  body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);transition:background .3s,color .3s;line-height:1.6}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+  /* ===== 顶部导航 ===== */
+  .topnav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .topnav .inner{display:flex;align-items:center;gap:24px;height:60px}
+  .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-weight:700;font-size:17px;white-space:nowrap}
+  .logo .mark{width:34px;height:34px;background:linear-gradient(135deg,var(--blue),#60a5fa);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+  .logo span.en{font-size:12px;color:var(--muted);font-weight:500;margin-left:2px}
+  .navtabs{display:flex;gap:4px}
+  .navtabs a{font-size:14px;color:var(--muted);text-decoration:none;padding:7px 16px;border-radius:8px;font-weight:500;transition:all .15s}
+  .navtabs a:hover,.navtabs a.active{color:var(--blue);background:var(--blue-light)}
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .search-mini{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--muted);cursor:pointer;transition:border-color .15s}
+  .search-mini:hover{border-color:var(--blue)}
+  .search-mini input{border:none;background:transparent;outline:none;color:var(--ink);font-size:13px;width:140px;font-family:inherit}
+  .tbtn{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;transition:transform .15s}
+  .tbtn:hover{transform:scale(1.1)}
+  .tbtn.on{border-color:var(--blue)}
+  .tbtn.t-light{background:linear-gradient(135deg,#fff 50%,var(--blue) 50%)}
+  .tbtn.t-dark{background:linear-gradient(135deg,#161b22 50%,#58a6ff 50%)}
+
+  /* ===== Hero ===== */
+  .hero{position:relative;overflow:hidden;padding:48px 0 40px}
+  .hero::before{content:"";position:absolute;inset:0;background:
+    radial-gradient(ellipse 600px 400px at 80% -10%,rgba(37,99,235,.08),transparent),
+    radial-gradient(ellipse 500px 350px at 10% 110%,rgba(5,150,105,.06),transparent);
+    pointer-events:none}
+  .hero .wrap{position:relative;display:flex;align-items:center;gap:40px;flex-wrap:wrap}
+  .hero-text{flex:1;min-width:320px}
+  .hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:16px}
+  .hero h1{font-size:42px;font-weight:800;line-height:1.15;letter-spacing:-.5px;margin-bottom:12px}
+  .hero h1 .accent{background:linear-gradient(135deg,var(--blue),#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero .sub{font-size:17px;color:var(--muted);margin-bottom:20px}
+  .hero-note{font-family:"Georgia",serif;font-style:italic;font-size:15px;color:var(--blue);transform:rotate(-2deg);display:inline-block;margin-top:8px;border-bottom:2px solid var(--blue);padding-bottom:2px}
+  .hero-visual{flex:0 0 380px;max-width:100%}
+  .hero-card{background:var(--card);border-radius:20px;box-shadow:var(--shadow-lg);padding:20px;position:relative;overflow:hidden}
+  .hero-card::after{content:"";position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(37,99,235,.1),transparent);border-radius:50%}
+  .hero-card .preview-img{width:100%;height:200px;object-fit:cover;border-radius:12px;background:linear-gradient(135deg,#1e3a5f,#2d5a87);display:flex;align-items:center;justify-content:center;font-size:60px}
+  .hero-card .preview-info{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+  .hero-card .preview-info .t{font-size:14px;font-weight:600}
+  .hero-card .preview-info .d{font-size:12px;color:var(--muted)}
+  .live-dot{display:inline-block;width:8px;height:8px;background:#22c55e;border-radius:50%;margin-right:5px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+  /* ===== 功能卡片 ===== */
+  .section{padding:32px 0}
+  .section-title{font-size:20px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+  .section-title::before{content:"";width:4px;height:22px;background:linear-gradient(180deg,var(--blue),#60a5fa);border-radius:2px}
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:900px){.features{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:580px){.features{grid-template-columns:1fr}}
+  .fcard{position:relative;border-radius:18px;padding:24px;text-decoration:none;color:var(--ink);overflow:hidden;transition:transform .2s,box-shadow .2s;box-shadow:var(--shadow-sm);min-height:180px;display:flex;flex-direction:column}
+  .fcard:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+  .fcard .bg-icon{position:absolute;right:-10px;bottom:-10px;font-size:100px;opacity:.12;pointer-events:none}
+  .fcard .ficon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;margin-bottom:14px;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+  .fcard h3{font-size:18px;font-weight:700;margin-bottom:6px}
+  .fcard p{font-size:13px;color:var(--muted);flex:1;line-height:1.5}
+  .fcard .arrow{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;margin-top:12px;color:inherit}
+  .fcard .arrow::after{content:"→";transition:transform .2s}
+  .fcard:hover .arrow::after{transform:translateX(4px)}
+  .fcard.blue{background:linear-gradient(135deg,#eff6ff,#dbeafe)}
+  .fcard.blue .ficon{background:linear-gradient(135deg,#2563eb,#3b82f6)}
+  .fcard.green{background:linear-gradient(135deg,#ecfdf5,#d1fae5)}
+  .fcard.green .ficon{background:linear-gradient(135deg,#059669,#10b981)}
+  .fcard.purple{background:linear-gradient(135deg,#f5f3ff,#ede9fe)}
+  .fcard.purple .ficon{background:linear-gradient(135deg,#7c3aed,#8b5cf6)}
+  .fcard.orange{background:linear-gradient(135deg,#fff7ed,#ffedd5)}
+  .fcard.orange .ficon{background:linear-gradient(135deg,#ea580c,#f97316)}
+  .fcard.pink{background:linear-gradient(135deg,#fdf2f8,#fce7f3)}
+  .fcard.pink .ficon{background:linear-gradient(135deg,#db2777,#ec4899)}
+  .fcard.teal{background:linear-gradient(135deg,#f0fdfa,#ccfbf1)}
+  .fcard.teal .ficon{background:linear-gradient(135deg,#0d9488,#14b8a6)}
+  body[data-theme="dark"] .fcard.blue{background:linear-gradient(135deg,rgba(37,99,235,.15),rgba(59,130,246,.08))}
+  body[data-theme="dark"] .fcard.green{background:linear-gradient(135deg,rgba(5,150,105,.15),rgba(16,185,129,.08))}
+  body[data-theme="dark"] .fcard.purple{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(139,92,246,.08))}
+  body[data-theme="dark"] .fcard.orange{background:linear-gradient(135deg,rgba(234,88,12,.15),rgba(249,115,22,.08))}
+  body[data-theme="dark"] .fcard.pink{background:linear-gradient(135deg,rgba(219,39,119,.15),rgba(236,72,153,.08))}
+  body[data-theme="dark"] .fcard.teal{background:linear-gradient(135deg,rgba(13,148,136,.15),rgba(20,184,166,.08))}
+
+  /* ===== 快捷链接区 ===== */
+  .linkgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:900px){.linkgrid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:580px){.linkgrid{grid-template-columns:1fr}}
+  .lcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm)}
+  .lcard h4{font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px;color:var(--ink)}
+  .lcard h4 .dot{width:6px;height:6px;border-radius:50%;background:var(--blue)}
+  .lcard ul{list-style:none}
+  .lcard li{margin:0}
+  .lcard a{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;text-decoration:none;color:var(--muted);font-size:13px;transition:all .12s}
+  .lcard a:hover{background:var(--blue-light);color:var(--blue)}
+  .lcard a .ext{margin-left:auto;font-size:10px;opacity:.5}
+
+  /* ===== 页脚 ===== */
+  footer{margin-top:48px;padding:28px 0;border-top:1px solid var(--line);text-align:center}
+  footer .slogan{font-family:"Georgia",serif;font-style:italic;font-size:15px;color:var(--blue);margin-bottom:8px}
+  footer .credit{font-size:12px;color:var(--muted)}
+  footer .credit a{color:var(--muted);text-decoration:none}
+  footer .credit a:hover{color:var(--blue)}
+
+  /* ===== 回到顶部 ===== */
+  .top-btn{position:fixed;right:24px;bottom:28px;width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:18px;cursor:pointer;box-shadow:var(--shadow-md);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:99}
   .top-btn.show{opacity:1;pointer-events:auto}
+  .top-btn:hover{transform:translateY(-2px)}
+
+  /* ===== 搜索弹窗 ===== */
+  .search-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:flex-start;justify-content:center;padding-top:120px}
+  .search-modal.show{display:flex}
+  .search-box{background:var(--card);border-radius:16px;padding:20px;width:90%;max-width:560px;box-shadow:var(--shadow-lg)}
+  .search-box input{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:15px;outline:none;color:var(--ink);font-family:inherit;margin-bottom:12px}
+  .search-box input:focus{border-color:var(--blue)}
+  .search-engines{display:flex;gap:8px;flex-wrap:wrap}
+  .search-engines button{flex:1;min-width:100px;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--muted);cursor:pointer;font-size:13px;font-family:inherit;transition:all .12s}
+  .search-engines button:hover,.search-engines button.on{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
 </style>
 </head>
 <body data-theme="light">
 
-<div class="hero">
-  <div class="wrap row" style="padding:0">
-    <h1>🖨️ 3D打印工作站</h1>
-    <div class="theme-pick">
-      <span class="tl">主题</span>
-      <button class="tbtn t-light on" data-t="light" title="浅色绿"></button>
+<!-- 顶部导航 -->
+<nav class="topnav">
+  <div class="wrap inner">
+    <a class="logo" href="index.html">
+      <span class="mark">🖨</span>
+      一言智造<span class="en">One3DP</span>
+    </a>
+    <div class="navtabs">
+      <a href="#workspace" class="active">工作台</a>
+      <a href="#tools">3D打印工具</a>
+      <a href="#resources">资源中心</a>
+    </div>
+    <div class="nav-right">
+      <div class="search-mini" onclick="openSearch()">
+        <span>🔍</span><input type="text" placeholder="搜索你需要的内容…" onclick="openSearch();return false" readonly>
+      </div>
+      <button class="tbtn t-light on" data-t="light" title="浅色"></button>
       <button class="tbtn t-dark" data-t="dark" title="深色"></button>
-      <button class="tbtn t-sepia" data-t="sepia" title="米色护眼"></button>
-    </div>
-    <div class="clock">
-      <div class="time" id="time">--:--</div>
-      <div class="date" id="date"></div>
     </div>
   </div>
-</div>
+</nav>
 
+<!-- Hero -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-text">
+      <div class="hero-badge"><span class="live-dot"></span>每日 09:00 自动更新</div>
+      <h1>个人工作台<br><span class="accent">导航中心</span></h1>
+      <p class="sub">让3D打印更简单 · 让创意更高效</p>
+      <span class="hero-note">你的3D打印一站式工具箱</span>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="preview-img">🖨️</div>
+        <div class="preview-info">
+          <div>
+            <div class="t">3D打印动态日报</div>
+            <div class="d">2026-09-11 · 已更新</div>
+          </div>
+          <a href="daily-hotspots.html" style="font-size:13px;color:var(--blue);text-decoration:none;font-weight:600">查看 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 核心功能 -->
 <div class="wrap">
-  <div class="searchbar">
-    <input id="q" type="text" placeholder="输入关键词，选平台直达搜索…" onkeydown="if(event.key==='Enter')go()">
-    <button class="eng on" data-e="bili">B站</button>
-    <button class="eng" data-e="douyin">抖音</button>
-    <button class="eng" data-e="xhs">小红书</button>
-  </div>
+  <section class="section" id="workspace">
+    <div class="section-title">核心功能</div>
+    <div class="features">
+      <a class="fcard blue" href="daily-hotspots.html">
+        <span class="bg-icon">📰</span>
+        <div class="ficon">📰</div>
+        <h3>每日热点</h3>
+        <p>行业动态 / 新品资讯 / 技术干货，一手掌握。硬件软件模型视频全覆盖。</p>
+        <span class="arrow">进入</span>
+      </a>
+      <a class="fcard teal" href="intl-report.html">
+        <span class="bg-icon">🌍</span>
+        <div class="ficon">🌍</div>
+        <h3>国际热点</h3>
+        <p>MakerWorld 国际区 + Printables 模型榜，YouTube 热门视频，全球视野。</p>
+        <span class="arrow">进入</span>
+      </a>
+      <a class="fcard green" href="price-calculator.html">
+        <span class="bg-icon">🧮</span>
+        <div class="ficon">🧮</div>
+        <h3>报价计算器</h3>
+        <p>快速估算打印成本，轻松规划你的项目，接单算价秒出报价。</p>
+        <span class="arrow">进入</span>
+      </a>
+      <a class="fcard purple" href="filament-manager.html">
+        <span class="bg-icon">🧵</span>
+        <div class="ficon">🧵</div>
+        <h3>耗材管理</h3>
+        <p>记录耗材库存、使用情况，多账号云端同步，智能管理不浪费。</p>
+        <span class="arrow">进入</span>
+      </a>
+      <a class="fcard orange" href="filament-guide.html">
+        <span class="bg-icon">📋</span>
+        <div class="ficon">📋</div>
+        <h3>耗材资料</h3>
+        <p>品牌参数 / 选购指南 / 打印设置，PLA PETG ABS TPU 全面参考。</p>
+        <span class="arrow">进入</span>
+      </a>
+      <a class="fcard pink" href="https://csxiangcn-ui.github.io/-/3d-contests.html" target="_blank" rel="noopener">
+        <span class="bg-icon">🏆</span>
+        <div class="ficon">🏆</div>
+        <h3>模型比赛汇总</h3>
+        <p>全球赛事 / 参赛作品 / 获奖名单，尽在这里。原站实时更新。</p>
+        <span class="arrow">进入</span>
+      </a>
+    </div>
+  </section>
 
-  <div class="quick" id="quick"></div>
+  <!-- 快捷链接 -->
+  <section class="section" id="tools">
+    <div class="section-title">3D打印工具</div>
+    <div class="linkgrid">
+      <div class="lcard">
+        <h4><span class="dot"></span>模型网站</h4>
+        <ul>
+          <li><a href="https://makerworld.com.cn" target="_blank" rel="noopener">MakerWorld 中国<span class="ext">↗</span></a></li>
+          <li><a href="https://makerworld.com" target="_blank" rel="noopener">MakerWorld 国际<span class="ext">↗</span></a></li>
+          <li><a href="https://printables.com" target="_blank" rel="noopener">Printables<span class="ext">↗</span></a></li>
+          <li><a href="https://www.thingiverse.com" target="_blank" rel="noopener">Thingiverse<span class="ext">↗</span></a></li>
+          <li><a href="https://cults3d.com" target="_blank" rel="noopener">Cults3D<span class="ext">↗</span></a></li>
+          <li><a href="https://thangs.com" target="_blank" rel="noopener">Thangs<span class="ext">↗</span></a></li>
+        </ul>
+      </div>
+      <div class="lcard">
+        <h4><span class="dot"></span>在线工具</h4>
+        <ul>
+          <li><a href="https://miniskyline.com/map" target="_blank" rel="noopener">可打印地图<span class="ext">↗</span></a></li>
+          <li><a href="https://itslitho.com" target="_blank" rel="noopener">ItsLitho 石版画<span class="ext">↗</span></a></li>
+          <li><a href="https://www.heroforge.com" target="_blank" rel="noopener">Hero Forge 手办<span class="ext">↗</span></a></li>
+          <li><a href="https://viewstl.com" target="_blank" rel="noopener">ViewSTL 在线查看<span class="ext">↗</span></a></li>
+          <li><a href="https://www.stlfinder.com" target="_blank" rel="noopener">STLfinder 聚合搜索<span class="ext">↗</span></a></li>
+        </ul>
+      </div>
+      <div class="lcard">
+        <h4><span class="dot"></span>切片软件</h4>
+        <ul>
+          <li><a href="https://bambulab.com/zh-cn/download" target="_blank" rel="noopener">Bambu Studio<span class="ext">↗</span></a></li>
+          <li><a href="https://orcaslicer.com" target="_blank" rel="noopener">OrcaSlicer<span class="ext">↗</span></a></li>
+          <li><a href="https://www.prusa3d.com/prusaslicer/" target="_blank" rel="noopener">PrusaSlicer<span class="ext">↗</span></a></li>
+          <li><a href="https://www.crealitycloud.com" target="_blank" rel="noopener">Creality Print<span class="ext">↗</span></a></li>
+          <li><a href="https://www.elegoo.com/pages/download" target="_blank" rel="noopener">CHITUBOX<span class="ext">↗</span></a></li>
+        </ul>
+      </div>
+      <div class="lcard">
+        <h4><span class="dot"></span>AI 建模</h4>
+        <ul>
+          <li><a href="https://www.tripo3d.ai" target="_blank" rel="noopener">Tripo AI<span class="ext">↗</span></a></li>
+          <li><a href="https://www.meshy.ai" target="_blank" rel="noopener">Meshy AI<span class="ext">↗</span></a></li>
+          <li><a href="https://hitem3d.com" target="_blank" rel="noopener">Hitem3D<span class="ext">↗</span></a></li>
+          <li><a href="https://hi3d.ai" target="_blank" rel="noopener">Hi3D<span class="ext">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="resources">
+    <div class="section-title">资源中心</div>
+    <div class="linkgrid">
+      <div class="lcard">
+        <h4><span class="dot"></span>行业资讯</h4>
+        <ul>
+          <li><a href="https://www.nanjixiong.com" target="_blank" rel="noopener">南极熊3D打印网<span class="ext">↗</span></a></li>
+          <li><a href="https://www.3dzyk.cn" target="_blank" rel="noopener">3D打印资源库<span class="ext">↗</span></a></li>
+          <li><a href="https://all3dp.com" target="_blank" rel="noopener">All3DP<span class="ext">↗</span></a></li>
+          <li><a href="https://3dprintingindustry.com" target="_blank" rel="noopener">3D Printing Industry<span class="ext">↗</span></a></li>
+          <li><a href="https://www.reddit.com/r/3Dprinting/" target="_blank" rel="noopener">Reddit r/3Dprinting<span class="ext">↗</span></a></li>
+        </ul>
+      </div>
+      <div class="lcard">
+        <h4><span class="dot"></span>创作中心</h4>
+        <ul>
+          <li><a href="https://member.bilibili.com/platform/home" target="_blank" rel="noopener">B站创作中心<span class="ext">↗</span></a></li>
+          <li><a href="https://creator.douyin.com" target="_blank" rel="noopener">抖音创作中心<span class="ext">↗</span></a></li>
+          <li><a href="https://creator.xiaohongshu.com" target="_blank" rel="noopener">小红书创作中心<span class="ext">↗</span></a></li>
+          <li><a href="https://channels.weixin.qq.com/platform" target="_blank" rel="noopener">视频号创作中心<span class="ext">↗</span></a></li>
+          <li><a href="https://studio.youtube.com" target="_blank" rel="noopener">YouTube Studio<span class="ext">↗</span></a></li>
+        </ul>
+      </div>
+      <div class="lcard">
+        <h4><span class="dot"></span>写作发布</h4>
+        <ul>
+          <li><a href="https://mp.weixin.qq.com" target="_blank" rel="noopener">微信公众号平台<span class="ext">↗</span></a></li>
+          <li><a href="https://docs.qq.com" target="_blank" rel="noopener">腾讯文档<span class="ext">↗</span></a></li>
+          <li><a href="https://xiumi.us" target="_blank" rel="noopener">秀米编辑器<span class="ext">↗</span></a></li>
+          <li><a href="https://www.135editor.com" target="_blank" rel="noopener">135编辑器<span class="ext">↗</span></a></li>
+        </ul>
+      </div>
+      <div class="lcard">
+        <h4><span class="dot"></span>采购渠道</h4>
+        <ul>
+          <li><a href="https://www.jd.com" target="_blank" rel="noopener">京东<span class="ext">↗</span></a></li>
+          <li><a href="https://www.taobao.com" target="_blank" rel="noopener">淘宝<span class="ext">↗</span></a></li>
+          <li><a href="https://www.pinduoduo.com" target="_blank" rel="noopener">拼多多<span class="ext">↗</span></a></li>
+          <li><a href="https://union.jd.com" target="_blank" rel="noopener">京东联盟<span class="ext">↗</span></a></li>
+          <li><a href="https://pub.alimama.com" target="_blank" rel="noopener">淘宝联盟<span class="ext">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
 </div>
 
-<div class="navbar"><div class="wrap inner" id="navbar"></div></div>
+<!-- 页脚 -->
+<footer>
+  <div class="slogan">用工具连接创意 · 让3D打印更有趣</div>
+  <div class="credit">
+    一言智造 One3DP · 你的3D打印好帮手 ·
+    <a href="history.html">历史归档</a> ·
+    <a href="https://github.com/OneWord3DP/3dprint-workstation" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <div class="pv-bar" style="margin-top:10px;font-size:12px;color:var(--muted)">
+    <span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv">-</span> 次 · 今日访客 <span id="busuanzi_value_site_uv">-</span> 人</span>
+  </div>
+</footer>
 
-<div class="wrap"><div class="grid" id="grid"></div></div>
+<button class="top-btn" id="topBtn" onclick="scrollTo({top:0,behavior:'smooth'})" aria-label="回到顶部">↑</button>
 
-<footer>链接要增删随时说；报价计算器与耗材管理与本站同域，点开即用。待办清单刷新后重置。<br>作者：一言智造One3DP</footer>
-
-<button class="top-btn" id="topBtn" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
+<!-- 搜索弹窗 -->
+<div class="search-modal" id="searchModal" onclick="if(event.target===this)closeSearch()">
+  <div class="search-box">
+    <input id="searchInput" type="text" placeholder="输入关键词，选择平台搜索…" onkeydown="if(event.key==='Enter')doSearch()">
+    <div class="search-engines">
+      <button class="on" data-e="bili">B站</button>
+      <button data-e="douyin">抖音</button>
+      <button data-e="xhs">小红书</button>
+      <button data-e="mw">MakerWorld</button>
+      <button data-e="google">Google</button>
+    </div>
+  </div>
+</div>
 
 <script>
-// ============ 配置区 ============
-const AV_COLORS = ['#0e6b46','#4f8ef7','#b45309','#e5697c','#9b7ef2','#38bdc8','#e0813f','#7ac74f'];
-
-const QUICK = [
-  {ic:'📰', n:'3D打印每日热点', d:'每天自动更新', u:'每日热点.html'},
-  {ic:'🌍', n:'国际3D打印热点', d:'All3DP/Reddit/YouTube', u:'intl-report.html'},
-  {ic:'🧮', n:'3D打印报价计算器', d:'接单算价 · 秒出报价', u:'3D打印报价计算器.html'},
-  {ic:'🧵', n:'3D打印耗材管理', d:'多账号 · 云端同步', u:'3D打印耗材管理.html'},
-  {ic:'📚', n:'3D耗材资料', d:'耗材参数在线表格', u:'耗材资料.html'},
-  {ic:'🏆', n:'3D模型比赛汇总', d:'原站实时·新窗口打开', u:'https://csxiangcn-ui.github.io/-/3d-contests.html'},
-
-
-];
-
-const CATS = [
-{ id:'flow',   icon:'📋', name:'每日流程清单', tag:'日报', todo:true, items:[
-  {n:'收集近48h热点', d:'B站/榜单/资讯'},
-  {n:'生成3D打印日报', d:'视频+硬件+模型榜'},
-  {n:'选封面图 · 修标题', d:'16:9与3:4各一张'},
-  {n:'发布公众号/视频号', d:'各创作中心'},
-  {n:'回看昨日数据', d:'播放/涨粉/转化'},
-]},
-{ id:'studio', icon:'🚀', name:'创作中心', tag:'发布与数据', items:[
-  {n:'B站创作中心', u:'https://member.bilibili.com/platform/home'},
-  {n:'抖音创作中心', u:'https://creator.douyin.com'},
-  {n:'小红书创作中心', u:'https://creator.xiaohongshu.com'},
-  {n:'视频号创作中心', u:'https://channels.weixin.qq.com/platform'},
-  {n:'YouTube Studio', u:'https://studio.youtube.com'},
-]},
-{ id:'tools',icon:'🧰',name:'3D打印工具',tag:'常用',items:[
-  {n:'报价计算器',u:'3D打印报价计算器.html'},
-  {n:'耗材管理',u:'3D打印耗材管理.html'},
-    {n:'耗材资料表',d:'参数+购买链接',u:'耗材资料.html'},
-    {n:'模型比赛汇总',d:'原站实时',u:'https://csxiangcn-ui.github.io/-/3d-contests.html'},
-  {n:'可打印地图',d:'城市地形模型',u:'https://miniskyline.com/map'},
-  {n:'ItsLitho 石版画',d:'照片转浮雕灯罩',u:'https://itslitho.com'},
-  {n:'Hero Forge 手办',d:'在线定制人偶',u:'https://www.heroforge.com'},
-  {n:'ViewSTL 在线查看',d:'打开STL测量缩放',u:'https://viewstl.com'},
-]},
-{ id:'models', icon:'🧩', name:'模型网站', tag:'找图找模型', wide:true, items:[
-  {n:'MakerWorld 中国', u:'https://makerworld.com.cn'},
-  {n:'MakerWorld 国际', u:'https://makerworld.com'},
-  {n:'创想云中国', u:'https://www.crealitycloud.cn'},
-    {n:'创想云国际', u:'https://www.crealitycloud.com'},
-  {n:'Printables', u:'https://printables.com'},
-  {n:'Thingiverse', u:'https://www.thingiverse.com'},
-  {n:'Cults3D', u:'https://cults3d.com'},
-  {n:'Thangs', u:'https://thangs.com'},
-  {n:'MyMiniFactory', u:'https://www.myminifactory.com'},
-  {n:'立创开源平台', u:'https://oshwhub.com'},
-]},
-{ id:'personal', icon:'👤', name:'个人模型站', tag:'独立创作者', items:[
-  {n:'ForgeCore · Thangs', d:'个人设计师主页', u:'https://thangs.com/designer/forgeCore'},
-  {n:'Pinshape', d:'独立创作者社区', u:'https://pinshape.com'},
-  {n:'3DModels.org', d:'独立模型库', u:'https://3dmodels.org'},
-  {n:'STLfinder', d:'全网模型聚合搜索', u:'https://www.stlfinder.com'},
-  {n:'CGTrader', d:'设计师直销', u:'https://www.cgtrader.com'},
-]},
-{ id:'news',   icon:'📰', name:'行业资讯', tag:'选题库', items:[
-  {n:'南极熊3D打印网', u:'https://www.nanjixiong.com'},
-  {n:'3D打印资源库', u:'https://www.3dzyk.cn'},
-  {n:'All3DP', u:'https://all3dp.com'},
-  {n:'Reddit r/3Dprinting', u:'https://www.reddit.com/r/3Dprinting/'},
-  {n:'3D Printing Industry', u:'https://3dprintingindustry.com'},
-]},
-{ id:'write',  icon:'✍️', name:'写作与发布', tag:'公众号', items:[
-  {n:'微信公众号平台', u:'https://mp.weixin.qq.com'},
-  {n:'腾讯文档', u:'https://docs.qq.com'},
-  {n:'秀米', u:'https://xiumi.us'},
-  {n:'135编辑器', u:'https://www.135editor.com'},
-]},
-{ id:'buy', icon:'🛒', name:'采购', tag:'进货·变现', items:[
-  {n:'京东联盟', d:'京东佣金', u:'https://union.jd.com'},
-  {n:'淘宝联盟', d:'淘宝佣金', u:'https://pub.alimama.com'},
-  {n:'京东', d:'自营快', u:'https://www.jd.com'},
-  {n:'淘宝', d:'品类全', u:'https://www.taobao.com'},
-  {n:'拼多多', d:'低价端', u:'https://www.pinduoduo.com'},
-]},
-];
-
-// ============ 渲染 ============
-const grid=document.getElementById('grid');
-let ci=0;
-
-document.getElementById('quick').innerHTML = QUICK.map(q=>
-  `<a class="qt" href="${q.u}" ${q.u.startsWith('http')?'target="_blank" rel="noopener"':''}>
-    <span class="ic">${q.ic}</span><span><div class="n">${q.n}</div><div class="d">${q.d}</div></span></a>`).join('');
-
-document.getElementById('navbar').innerHTML = CATS.map(c=>
-  `<a href="#${c.id}">${c.name}</a>`).join('');
-
-CATS.forEach(cat=>{
-  const card=document.createElement('div');
-  card.className='cat'+(cat.wide?' wide':'')+(cat.todo?' accent':''); card.id=cat.id;
-  let inner=`<h3><span>${cat.icon}</span>${cat.name}${cat.tag?`<span class="tag">${cat.tag}</span>`:''}</h3>`;
-  if(cat.todo){
-    inner+='<ul class="links todo">'+cat.items.map(it=>
-      `<li><input type="checkbox" onchange="this.parentElement.classList.toggle('done',this.checked)"><span>${it.n}</span><span class="t-desc">${it.d||''}</span></li>`).join('')+'</ul>';
-  }else{
-    const two=cat.items.length>=7?' two':'';
-    inner+='<ul class="links'+two+'">'+cat.items.map(it=>{
-      const c=AV_COLORS[ci++%AV_COLORS.length];
-      const letter=it.n.replace(/[^A-Za-z\u4e00-\u9fa5]/g,'').charAt(0)||'·';
-      return `<li><a href="${it.u||'#'}" ${it.u&&it.u.startsWith('http')?'target="_blank" rel="noopener"':''}>
-        <span class="av" style="background:${c}">${letter}</span><span class="name">${it.n}</span><span class="desc">${it.d||''}</span></a></li>`;
-    }).join('')+'</ul>';
-  }
-  card.innerHTML=inner;
-  grid.appendChild(card);
-});
-
-// ============ 主题切换 ============
-const THEME_KEY='fdm_theme_v1';
+// 主题切换
+const THEME_KEY='one3dp_theme';
 function applyTheme(t){
   document.body.dataset.theme=t;
   document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
   try{localStorage.setItem(THEME_KEY,t);}catch(e){}
 }
 document.querySelectorAll('.tbtn').forEach(b=>b.addEventListener('click',()=>applyTheme(b.dataset.t)));
-try{
-  const saved=localStorage.getItem(THEME_KEY);
-  if(saved) applyTheme(saved);
-}catch(e){}
+try{const saved=localStorage.getItem(THEME_KEY);if(saved)applyTheme(saved);}catch(e){}
 
-// ============ 时钟 ============
-function tick(){
-  const d=new Date();
-  document.getElementById('time').textContent=d.toTimeString().slice(0,5);
-  const wd=['日','一','二','三','四','五','六'][d.getDay()];
-  document.getElementById('date').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${wd}`;
-}
-tick(); setInterval(tick,15000);
+// 回到顶部
+const topBtn=document.getElementById('topBtn');
+addEventListener('scroll',()=>topBtn.classList.toggle('show',scrollY>400));
 
-// ============ 搜索 ============
+// 搜索
 const ENGINES={
   bili:q=>'https://search.bilibili.com/all?keyword='+encodeURIComponent(q),
   douyin:q=>'https://www.douyin.com/search/'+encodeURIComponent(q),
   xhs:q=>'https://www.xiaohongshu.com/search_result?keyword='+encodeURIComponent(q),
+  mw:q=>'https://makerworld.com/zh/search?keyword='+encodeURIComponent(q),
+  google:q=>'https://www.google.com/search?q='+encodeURIComponent(q)+' 3D打印'
 };
-let cur='bili';
-document.querySelectorAll('.eng').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('.eng').forEach(x=>x.classList.remove('on'));
-  b.classList.add('on'); cur=b.dataset.e;
-  if(document.getElementById('q').value.trim()) go();
-}));
-function go(){
-  const q=document.getElementById('q').value.trim();
-  if(q) window.open(ENGINES[cur](q),'_blank');
+let curEngine='bili';
+function openSearch(){document.getElementById('searchModal').classList.add('show');setTimeout(()=>document.getElementById('searchInput').focus(),100);}
+function closeSearch(){document.getElementById('searchModal').classList.remove('show');}
+document.querySelectorAll('.search-engines button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.search-engines button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');curEngine=b.dataset.e;
+  });
+});
+function doSearch(){
+  const q=document.getElementById('searchInput').value.trim();
+  if(q){window.open(ENGINES[curEngine](q),'_blank');closeSearch();}
 }
-
-const topBtn=document.getElementById('topBtn');
-addEventListener('scroll',()=>topBtn.classList.toggle('show',scrollY>400));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSearch();});
 </script>
-<div class="pv-bar" style="text-align:center;color:#8a919c;font-size:12px;margin:16px auto 8px;line-height:1.8;">
-  <span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv">-</span> 次 · 今日访客 <span id="busuanzi_value_site_uv">-</span> 人</span>
-</div>
 <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </body>
 </html>
