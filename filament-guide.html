@@ -5,25 +5,64 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3D耗材资料 · 3D打印工作站</title>
 <style>
-  :root{--hero:#0e6b46;--hero-ink:#fff;--bg:#f3f4f6;--card:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--green:#0e6b46;--green-light:#e7f3ee}
-  body[data-theme="dark"]{--hero:#14201b;--hero-ink:#e8efeb;--bg:#0f1512;--card:#161d1a;--ink:#e8efeb;--muted:#8fa39a;--line:#2a3530;--green:#22c07d;--green-light:rgba(34,192,125,.12)}
-  body[data-theme="sepia"]{--hero:#7a5c2e;--hero-ink:#fffdf7;--bg:#f4eee1;--card:#fffdf7;--ink:#3d3323;--muted:#8c7f66;--line:#e6dcc6;--green:#8a6524;--green-light:#f3ead6}
+/* ========== 站点统一导航与主题（与首页一致） ========== */
+  :root{
+    --bg:#f3f6fb; --card:#ffffff; --ink:#111827; --muted:#64748b; --line:#e4eaf2;
+    --blue:#2563eb; --blue2:#4f8bfb; --blue-soft:#eaf1fe;
+    --purple:#7c3aed; --purple2:#a78bfa; --purple-soft:#f2ecfd;
+    --teal:#0d9488; --teal2:#2dd4bf; --teal-soft:#e9faf7;
+    --green:#059669; --green2:#34d399; --green-soft:#e8f9f1;
+    --orange:#ea580c; --orange2:#fb923c; --orange-soft:#fdf0e7;
+    --pink:#db2777; --pink2:#f472b6; --pink-soft:#fdeef5;
+    --shadow-s:0 1px 2px rgba(15,23,42,.05);
+    --shadow-m:0 12px 32px rgba(15,23,42,.08);
+    --r:16px;
+  }
+  body[data-theme="dark"]{
+    --bg:#0b1220; --card:#141a2b; --ink:#e7edf5; --muted:#93a3b8; --line:#26303f;
+    --blue:#4d8dff; --blue2:#8ab1ff; --blue-soft:rgba(77,141,255,.14);
+    --purple:#a78bfa; --purple-soft:rgba(167,139,250,.16);
+    --teal-soft:rgba(45,212,191,.13); --green-soft:rgba(52,211,153,.13);
+    --orange-soft:rgba(251,146,60,.13); --pink-soft:rgba(244,114,182,.13);
+    --shadow-s:0 1px 2px rgba(0,0,0,.35);
+    --shadow-m:0 12px 32px rgba(0,0,0,.4);
+  }
+  :root{--green:#2563eb;--green-dark:#1e4fb8;--green-light:#eaf1fe}
+  body[data-theme="dark"]{--green:#4d8dff;--green-dark:#3b82f6;--green-light:rgba(77,141,255,.14)}
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;transition:background .25s,color .25s}
-  header{background:var(--hero);color:var(--hero-ink);padding:12px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  header h1{font-size:17px}
-  header .sub{font-size:12px;opacity:.85}
-  .theme-pick{display:flex;gap:6px;align-items:center}
-  .theme-pick .tl{font-size:11.5px;opacity:.8;margin-right:2px}
-  .tbtn{width:24px;height:24px;border-radius:50%;border:2px solid rgba(128,128,128,.5);cursor:pointer;padding:0}
-  .tbtn.on{border-color:currentColor;outline:2px solid rgba(128,128,128,.35)}
-  .tbtn.t-light{background:linear-gradient(135deg,#fff 50%,#0e6b46 50%)}
-  .tbtn.t-dark{background:linear-gradient(135deg,#161d1a 50%,#22c07d 50%)}
-  .tbtn.t-sepia{background:linear-gradient(135deg,#fffdf7 50%,#7a5c2e 50%)}
-  .hbtn{font-size:12.5px;color:var(--hero-ink);text-decoration:none;background:rgba(128,128,128,.18);border:1px solid rgba(128,128,128,.4);padding:6px 14px;border-radius:99px;font-weight:600;cursor:pointer;font-family:inherit}
-  .hbtn:hover{background:rgba(128,128,128,.32)}
-  .hbtn.act{background:#fff;color:var(--hero);border-color:#fff}
-  header .sp{margin-left:auto;display:flex;gap:8px;align-items:center}
+  body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;transition:background .25s,color .25s;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .topnav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+  .topnav .inner{display:flex;align-items:center;gap:20px;height:64px;max-width:1280px;margin:0 auto;padding:0 28px}
+  .logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;white-space:nowrap;color:var(--ink)}
+  .logo .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,var(--blue),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 4px 14px rgba(37,99,235,.35)}
+  .navtabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+  .navtabs::-webkit-scrollbar{display:none}
+  .navtabs a{font-size:15px;font-weight:500;color:var(--muted);padding:8px 16px;border-radius:10px;white-space:nowrap;transition:all .15s}
+  .navtabs a:hover{color:var(--blue);background:var(--blue-soft)}
+  .navtabs a.active{color:var(--blue);font-weight:700;background:var(--blue-soft)}
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .tbtn{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;transition:transform .15s,box-shadow .15s;background:transparent}
+  .tbtn:hover{transform:scale(1.12)}
+  .tbtn.on{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .tbtn.t-light{background:linear-gradient(135deg,#fff 50%,var(--blue) 50%)}
+  .tbtn.t-dark{background:linear-gradient(135deg,#10182f 50%,#58a6ff 50%)}
+  .page-hero{background:linear-gradient(135deg,var(--blue) 0%,var(--blue2) 52%,var(--purple) 125%);color:#fff;border-radius:var(--r);padding:22px 26px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:var(--shadow-m);margin-bottom:16px}
+  .page-hero h1{font-size:21px;letter-spacing:.4px}
+  .page-hero .sub{font-size:13px;opacity:.9;margin-top:4px;line-height:1.6}
+  .page-hero .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .pbtn{font-size:12.5px;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.45);padding:7px 14px;border-radius:999px;cursor:pointer;font-weight:600;font-family:inherit;text-decoration:none;transition:background .15s}
+  .pbtn:hover{background:rgba(255,255,255,.3)}
+  .pbtn.act{background:#fff;color:var(--blue);border-color:#fff}
+  @media (max-width:640px){
+    .topnav .inner{flex-wrap:wrap;row-gap:4px;height:auto;padding:12px 16px 8px}
+    .navtabs{order:3;width:100%;flex:none}
+    .nav-right{gap:8px}
+    .navtabs a{padding:8px 12px}
+    .page-hero{padding:18px;align-items:flex-start}
+    .page-hero h1{font-size:18px}
+    .page-hero .acts{margin-left:0}
+  }
   .wrap{max-width:1400px;margin:0 auto;padding:14px 16px 8px}
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
   .toolbar input,.toolbar select{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 13px;font-size:13px;color:var(--ink);outline:none;font-family:inherit}
@@ -73,23 +112,34 @@
 </style>
 </head>
 <body data-theme="light">
-<header>
-  <h1>📚 3D耗材资料</h1>
-  <span class="sub" id="sub">加载中…</span>
-  <div class="theme-pick">
-    <span class="tl">主题</span>
-    <button class="tbtn t-light on" data-t="light" title="浅色绿"></button>
-    <button class="tbtn t-dark" data-t="dark" title="深色"></button>
-    <button class="tbtn t-sepia" data-t="sepia" title="米色护眼"></button>
+<nav class="topnav">
+  <div class="inner">
+    <a class="logo" href="index.html"><span class="mark">⬡</span>一言智造</a>
+    <div class="navtabs">
+      <a href="index.html#workspace">个人工作台</a>
+      <a href="index.html#tools" class="active">3D打印工具</a>
+      <a href="index.html#resources">资源中心</a>
+      <a href="index.html#community">社区交流</a>
+    </div>
+    <div class="nav-right">
+      <button class="tbtn t-light on" data-t="light" title="浅色模式" aria-label="浅色模式"></button>
+      <button class="tbtn t-dark" data-t="dark" title="深色模式" aria-label="深色模式"></button>
+    </div>
   </div>
-  <div class="sp">
-    <button class="hbtn" id="btnEdit">✏️ 编辑模式</button>
-    <button class="hbtn" id="btnExport" style="display:none">📤 导出JSON</button>
-    <span class="hbtn" id="dirtyBadge" style="display:none"></span>
-    <button class="hbtn" id="btnRevert" style="display:none">↺ 放弃本地修改</button>
-    <a class="hbtn" href="index.html">← 返回工作站</a>
+</nav>
+<div class="page-hero">
+  <div>
+    <h1>📚 3D耗材资料</h1>
+    <div class="sub" id="sub">加载中…</div>
   </div>
-</header>
+  <div class="acts">
+    <button class="pbtn" id="btnEdit">✏️ 编辑模式</button>
+    <button class="pbtn" id="btnExport" style="display:none">📤 导出JSON</button>
+    <span class="pbtn" id="dirtyBadge" style="display:none"></span>
+    <button class="pbtn" id="btnRevert" style="display:none">↺ 放弃本地修改</button>
+    <a class="pbtn" href="index.html">← 返回工作站</a>
+  </div>
+</div>
 <div class="wrap">
   <div class="edit-tip">编辑模式已解锁：点击单元格直接修改，改动会自动存在本浏览器（刷新不丢）。要真正更新线上，点右上「导出JSON」→ 复制 → 打开 <a href="https://github.com/OneWord3DP/3dprint-workstation/edit/main/filament-guide.json" target="_blank" style="color:inherit">GitHub 上的 filament-guide.json</a> → 粘贴替换 → Commit，约1分钟后本站自动更新。购买链接/官网需增删时，在 JSON 的 l 字段按「列号+行号」修改。</div>
   <div class="toolbar">
@@ -257,7 +307,7 @@ fetch('filament-guide.json?t='+Date.now()).then(function(r){return r.json();}).t
 $('q').addEventListener('input',function(){if(DATA)render();});
 $('fType').addEventListener('change',function(){if(DATA)render();});
 $('fRate').addEventListener('change',function(){if(DATA)render();});
-var THEME_KEY='fdm_theme_v1';
+var THEME_KEY='one3dp_theme';
 function applyTheme(t){
   document.body.dataset.theme=t;
   document.querySelectorAll('.tbtn').forEach(function(b){b.classList.toggle('on',b.dataset.t===t);});

@@ -5,54 +5,109 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>国际3D打印热点 · 2026-09-11</title>
 <style>
-* { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:-apple-system,"Segoe UI","Microsoft YaHei",Roboto,sans-serif; background:#f0f2f5; color:#1b1f24; line-height:1.65; }
-.wrap { max-width:1200px; margin:0 auto; padding:20px 16px 60px; }
-header { background:linear-gradient(135deg,#0a2540 0%,#1a5276 50%,#1e8449 100%); color:#fff; border-radius:16px; padding:28px 32px; box-shadow:0 8px 30px rgba(0,0,0,.15); }
-header h1 { font-size:26px; margin-bottom:6px; }
-header .sub { opacity:.85; font-size:13px; }
-.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-top:18px; }
-.stat { background:rgba(255,255,255,.12); border-radius:10px; padding:12px 16px; }
-.stat b { font-size:22px; display:block; }
-.stat span { font-size:12px; opacity:.8; }
-h2 { font-size:20px; margin:28px 0 12px; color:#0a2540; border-left:4px solid #1e8449; padding-left:12px; }
-.lead { background:#fff; border-radius:10px; padding:14px 18px; margin-bottom:16px; font-size:13.5px; color:#444; border:1px solid #e5e7eb; }
-.grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
-@media(max-width:900px){ .grid3{grid-template-columns:repeat(2,1fr);} }
-@media(max-width:600px){ .grid3{grid-template-columns:1fr;} }
-.card { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,.06); border:1px solid #e5e7eb; }
-.cimg { height:160px; overflow:hidden; background:#eee; }
-.cimg img { width:100%; height:100%; object-fit:cover; }
-.ctag { display:inline-block; background:#e8f5e9; color:#2e7d32; font-size:11px; padding:2px 10px; border-radius:20px; margin:10px 14px 0; }
-.ctitle { font-size:15px; font-weight:700; padding:8px 14px 4px; }
-.ctitle a { color:#1a237e; text-decoration:none; }
-.cdate { font-size:11.5px; color:#888; padding:0 14px 6px; }
-.cbody { font-size:13px; color:#444; padding:0 14px 10px; }
-.cpoints { list-style:none; padding:0 14px 14px; }
-.cpoints li { font-size:12px; color:#555; padding:3px 0; border-top:1px dashed #eee; }
-.cpoints li::before { content:"▸ "; color:#1e8449; }
-.mcard { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,.06); border:1px solid #e5e7eb; position:relative; }
-.mimg { height:150px; overflow:hidden; background:#eee; }
-.mimg img { width:100%; height:100%; object-fit:cover; }
-.mrank { position:absolute; top:8px; left:8px; background:rgba(0,0,0,.65); color:#fff; font-size:13px; font-weight:700; padding:2px 10px; border-radius:20px; }
-.mtitle { font-size:13.5px; font-weight:600; padding:8px 12px 2px; }
-.mtitle a { color:#1a237e; text-decoration:none; }
-.mmeta { font-size:11px; color:#888; padding:0 12px 4px; }
-.mstats { display:flex; flex-wrap:wrap; gap:6px; padding:0 12px 8px; }
-.mstats span { font-size:11px; background:#f0f4f8; padding:2px 8px; border-radius:6px; color:#444; }
-.mlink { font-size:11px; padding:0 12px 10px; }
-.mlink a { color:#1565c0; text-decoration:none; }
-.vcard { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,.06); border:1px solid #e5e7eb; }
-.vimg { height:140px; overflow:hidden; background:#eee; }
-.vimg img { width:100%; height:100%; object-fit:cover; }
-.vtitle { font-size:13.5px; font-weight:600; padding:8px 12px 2px; }
-.vtitle a { color:#1a237e; text-decoration:none; }
-.vmeta { font-size:11.5px; color:#888; padding:0 12px 10px; }
-.notice { background:#fff8e1; border:1px solid #ffe082; border-radius:10px; padding:12px 16px; margin:12px 0; font-size:13px; color:#795548; }
-footer { margin-top:32px; text-align:center; color:#888; font-size:12px; border-top:1px solid #ddd; padding-top:16px; }
+/* ========== 站点统一导航与主题（与首页一致） ========== */
+:root{
+  --bg:#f3f6fb; --card:#ffffff; --ink:#111827; --muted:#64748b; --line:#e4eaf2;
+  --blue:#2563eb; --blue2:#4f8bfb; --blue-soft:#eaf1fe;
+  --purple:#7c3aed; --purple2:#a78bfa; --purple-soft:#f2ecfd;
+  --green:#059669; --green2:#34d399; --green-soft:#e8f9f1;
+  --amber:#b45309; --amber-bg:#fef3c7;
+  --shadow-s:0 1px 2px rgba(15,23,42,.05);
+  --shadow-m:0 12px 32px rgba(15,23,42,.08);
+  --r:16px;
+}
+body[data-theme="dark"]{
+  --bg:#0b1220; --card:#141a2b; --ink:#e7edf5; --muted:#93a3b8; --line:#26303f;
+  --blue:#4d8dff; --blue2:#8ab1ff; --blue-soft:rgba(77,141,255,.14);
+  --purple:#a78bfa; --purple-soft:rgba(167,139,250,.16);
+  --green:#4d8dff; --green-soft:rgba(77,141,255,.14);
+  --amber:#fbbf24; --amber-bg:rgba(251,191,36,.15);
+  --shadow-s:0 1px 2px rgba(0,0,0,.35);
+  --shadow-m:0 12px 32px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.topnav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.topnav .inner{display:flex;align-items:center;gap:20px;height:64px;max-width:1280px;margin:0 auto;padding:0 28px}
+.logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;white-space:nowrap;color:var(--ink)}
+.logo .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,var(--blue),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 4px 14px rgba(37,99,235,.35)}
+.navtabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.navtabs::-webkit-scrollbar{display:none}
+.navtabs a{font-size:15px;font-weight:500;color:var(--muted);padding:8px 16px;border-radius:10px;white-space:nowrap;transition:all .15s}
+.navtabs a:hover{color:var(--blue);background:var(--blue-soft)}
+.navtabs a.active{color:var(--blue);font-weight:700;background:var(--blue-soft)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.tbtn{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;transition:transform .15s,box-shadow .15s;background:transparent}
+.tbtn:hover{transform:scale(1.12)}
+.tbtn.on{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+.tbtn.t-light{background:linear-gradient(135deg,#fff 50%,var(--blue) 50%)}
+.tbtn.t-dark{background:linear-gradient(135deg,#10182f 50%,#58a6ff 50%)}
+.wrap{max-width:1200px;margin:0 auto;padding:20px 16px 60px}
+header{background:linear-gradient(135deg,#2563eb 0%,#4f8bfb 52%,#7c3aed 125%);color:#fff;border-radius:16px;padding:26px 32px 18px;box-shadow:var(--shadow-m)}
+header .btns{text-align:right;margin-top:10px}
+header h1{font-size:26px;margin-bottom:6px}
+header .sub{opacity:.85;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:18px}
+.stat{background:rgba(255,255,255,.12);border-radius:10px;padding:12px 16px}
+.stat b{font-size:22px;display:block}
+.stat span{font-size:12px;opacity:.8}
+h2{font-size:20px;margin:28px 0 12px;color:var(--ink);border-left:4px solid var(--blue);padding-left:12px}
+.lead{background:var(--card);border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:13.5px;color:var(--muted);border:1px solid var(--line)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:900px){.grid3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid3{grid-template-columns:1fr}}
+.card{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-s);border:1px solid var(--line)}
+.cimg{height:160px;overflow:hidden;background:var(--line)}
+.cimg img{width:100%;height:100%;object-fit:cover}
+.ctag{display:inline-block;background:var(--green-soft);color:var(--green);font-size:11px;padding:2px 10px;border-radius:20px;margin:10px 14px 0}
+.ctitle{font-size:15px;font-weight:700;padding:8px 14px 4px}
+.ctitle a{color:var(--blue);text-decoration:none}
+.cdate{font-size:11.5px;color:var(--muted);padding:0 14px 6px}
+.cbody{font-size:13px;color:var(--ink);padding:0 14px 10px}
+.cpoints{list-style:none;padding:0 14px 14px}
+.cpoints li{font-size:12px;color:var(--muted);padding:3px 0;border-top:1px dashed var(--line)}
+.cpoints li::before{content:"▸ ";color:var(--blue)}
+.mcard{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-s);border:1px solid var(--line);position:relative}
+.mimg{height:150px;overflow:hidden;background:var(--line)}
+.mimg img{width:100%;height:100%;object-fit:cover}
+.mrank{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.65);color:#fff;font-size:13px;font-weight:700;padding:2px 10px;border-radius:20px}
+.mtitle{font-size:13.5px;font-weight:600;padding:8px 12px 2px}
+.mtitle a{color:var(--blue);text-decoration:none}
+.mmeta{font-size:11px;color:var(--muted);padding:0 12px 4px}
+.mstats{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 8px}
+.mstats span{font-size:11px;background:var(--blue-soft);padding:2px 8px;border-radius:6px;color:var(--ink)}
+.mlink{font-size:11px;padding:0 12px 10px}
+.mlink a{color:var(--blue);text-decoration:none}
+.vcard{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-s);border:1px solid var(--line)}
+.vimg{height:140px;overflow:hidden;background:var(--line)}
+.vimg img{width:100%;height:100%;object-fit:cover}
+.vtitle{font-size:13.5px;font-weight:600;padding:8px 12px 2px}
+.vtitle a{color:var(--blue);text-decoration:none}
+.vmeta{font-size:11.5px;color:var(--muted);padding:0 12px 10px}
+.notice{background:var(--amber-bg);border:1px solid rgba(200,160,60,.45);border-radius:10px;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--amber)}
+footer{margin-top:32px;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:16px}
+.pbtn{font-size:12px;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.45);padding:5px 14px;border-radius:999px;cursor:pointer;font-weight:600;font-family:inherit;text-decoration:none;display:inline-block;transition:background .15s}
+.pbtn:hover{background:rgba(255,255,255,.3)}
+@media(max-width:640px){.topnav .inner{flex-wrap:wrap;row-gap:4px;height:auto;padding:12px 16px 8px}.navtabs{order:3;width:100%;flex:none}.nav-right{gap:8px}.navtabs a{padding:8px 12px}}
 </style>
 </head>
-<body>
+<body data-theme="light">
+<nav class="topnav">
+  <div class="inner">
+    <a class="logo" href="index.html"><span class="mark">⬡</span>一言智造</a>
+    <div class="navtabs">
+      <a href="index.html#workspace">个人工作台</a>
+      <a href="index.html#tools" class="active">3D打印工具</a>
+      <a href="index.html#resources">资源中心</a>
+      <a href="index.html#community">社区交流</a>
+    </div>
+    <div class="nav-right">
+      <button class="tbtn t-light on" data-t="light" title="浅色模式" aria-label="浅色模式"></button>
+      <button class="tbtn t-dark" data-t="dark" title="深色模式" aria-label="深色模式"></button>
+    </div>
+  </div>
+</nav>
 <div class="wrap">
 <header>
   <h1>🌍 国际3D打印热点 · 2026-09-11</h1>
@@ -61,6 +116,7 @@ footer { margin-top:32px; text-align:center; color:#888; font-size:12px; border-
     <div class="stat"><b>24</b><span>模型榜（MW INTL 12 + Printables 12）</span></div>
     <div class="stat"><b>6</b><span>YouTube 热门视频</span></div>
   </div>
+  <div class="btns"><a class="pbtn" href="index.html">← 返回工作站</a></div>
 </header>
 
 <h2>一、模型榜 · 本周热门（MakerWorld 国际区 + Printables）</h2>
@@ -399,5 +455,17 @@ footer { margin-top:32px; text-align:center; color:#888; font-size:12px; border-
 
 <footer>国际3D打印热点 · 由 一言智造One3DP 生成 · 数据来自公开接口与页面实测 · 2026-09-11</footer>
 </div>
+<script>
+(function(){
+var THEME_KEY='one3dp_theme';
+function applyTheme(t){
+  document.body.dataset.theme=t;
+  document.querySelectorAll('.tbtn').forEach(function(b){b.classList.toggle('on',b.dataset.t===t);});
+  try{localStorage.setItem(THEME_KEY,t);}catch(e){}
+}
+document.querySelectorAll('.tbtn').forEach(function(b){b.addEventListener('click',function(){applyTheme(b.dataset.t);});});
+try{var sv=localStorage.getItem(THEME_KEY);if(sv)applyTheme(sv);}catch(e){}
+})();
+</script>
 </body>
 </html>

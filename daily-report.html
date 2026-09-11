@@ -5,14 +5,54 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3D打印动态日报 · 2026-09-11</title>
 <style>
-  :root {
-    --ink:#1b1f24; --muted:#6b7280; --line:#e5e7eb; --bg:#f6f7f9;
-    --accent:#e8590c; --accent2:#0b7285; --card:#ffffff;
+  :root{
+    --ink:#111827; --muted:#64748b; --line:#e4eaf2; --bg:#f3f6fb;
+    --accent:#ea580c; --accent2:#2563eb; --card:#ffffff;
+    --blue:#2563eb; --blue2:#4f8bfb; --blue-soft:#eaf1fe;
+    --purple:#7c3aed; --purple2:#a78bfa; --purple-soft:#f2ecfd;
+    --amber:#b45309; --amber-bg:#fef3c7;
+    --shadow-s:0 1px 2px rgba(15,23,42,.05);
+    --shadow-m:0 12px 32px rgba(15,23,42,.08);
+    --r:16px;
+  }
+  body[data-theme="dark"]{
+    --ink:#e7edf5; --muted:#93a3b8; --line:#26303f; --bg:#0b1220;
+    --accent:#fb923c; --accent2:#4d8dff; --card:#141a2b;
+    --blue:#4d8dff; --blue2:#8ab1ff; --blue-soft:rgba(77,141,255,.14);
+    --purple:#a78bfa; --purple-soft:rgba(167,139,250,.16);
+    --amber:#fbbf24; --amber-bg:rgba(251,191,36,.15);
+    --shadow-s:0 1px 2px rgba(0,0,0,.35);
+    --shadow-m:0 12px 32px rgba(0,0,0,.4);
   }
   * { box-sizing:border-box; margin:0; padding:0; }
-  body { font-family:-apple-system,"Segoe UI","Microsoft YaHei",Roboto,sans-serif; background:var(--bg); color:var(--ink); line-height:1.65; }
+  body { font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--ink); line-height:1.65; -webkit-font-smoothing:antialiased; }
+  a{color:inherit;text-decoration:none}
+  .topnav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+  .topnav .inner{display:flex;align-items:center;gap:20px;height:64px;max-width:1280px;margin:0 auto;padding:0 28px}
+  .logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;white-space:nowrap;color:var(--ink)}
+  .logo .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,var(--blue),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 4px 14px rgba(37,99,235,.35)}
+  .navtabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+  .navtabs::-webkit-scrollbar{display:none}
+  .navtabs a{font-size:15px;font-weight:500;color:var(--muted);padding:8px 16px;border-radius:10px;white-space:nowrap;transition:all .15s}
+  .navtabs a:hover{color:var(--blue);background:var(--blue-soft)}
+  .navtabs a.active{color:var(--blue);font-weight:700;background:var(--blue-soft)}
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .tbtn{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;transition:transform .15s,box-shadow .15s;background:transparent}
+  .tbtn:hover{transform:scale(1.12)}
+  .tbtn.on{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .tbtn.t-light{background:linear-gradient(135deg,#fff 50%,var(--blue) 50%)}
+  .tbtn.t-dark{background:linear-gradient(135deg,#10182f 50%,#58a6ff 50%)}
   .wrap { max-width:1080px; margin:0 auto; padding:20px 18px 60px; }
-  header.hero { background:linear-gradient(135deg,#0d2b3e 0%,#134e5e 55%,#1a6b57 100%); color:#fff; border-radius:16px; padding:28px 30px; margin-bottom:18px; box-shadow:0 6px 24px rgba(0,0,0,.12); }
+  header.hero { background:linear-gradient(135deg,#2563eb 0%,#4f8bfb 52%,#7c3aed 125%); color:#fff; border-radius:16px; padding:26px 30px 20px; margin-bottom:18px; box-shadow:var(--shadow-m); }
+  header.hero .btns{text-align:right;margin-top:10px}
+  .pbtn{font-size:12px;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.45);padding:5px 14px;border-radius:999px;cursor:pointer;font-weight:600;font-family:inherit;text-decoration:none;display:inline-block;transition:background .15s}
+  .pbtn:hover{background:rgba(255,255,255,.3)}
+  @media (max-width:640px){
+    .topnav .inner{flex-wrap:wrap;row-gap:4px;height:auto;padding:12px 16px 8px}
+    .navtabs{order:3;width:100%;flex:none}
+    .nav-right{gap:8px}
+    .navtabs a{padding:8px 12px}
+  }
   header.hero h1 { font-size:26px; letter-spacing:.5px; }
   header.hero .sub { opacity:.85; margin-top:6px; font-size:14px; }
   .statbar { display:flex; gap:12px; flex-wrap:wrap; margin:16px 0 4px; }
@@ -30,11 +70,11 @@
   .card .body { padding:14px 16px; display:flex; flex-direction:column; gap:8px; flex:1; }
   .card h3 { font-size:15px; line-height:1.4; }
   .card .date { font-size:12px; color:var(--accent2); }
-  .card p { font-size:13px; color:#374151; }
+  .card p { font-size:13px; color:var(--ink); }
   .card .pts { display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; }
-  .chip { font-size:11px; background:#eef3f6; color:#0b7285; border:1px solid #d6e4ea; padding:2px 8px; border-radius:14px; }
+  .chip { font-size:11px; background:var(--blue-soft); color:var(--accent2); border:1px solid var(--line); padding:2px 8px; border-radius:14px; }
   .card a.src { margin-top:6px; font-size:12px; color:var(--accent); text-decoration:none; }
-  .notice { background:#fff8e6; border:1px solid #f3d9a4; border-left:4px solid #e8a838; border-radius:8px; padding:12px 14px; font-size:13px; margin:12px 0; color:#5b4a1e; }
+  .notice { background:var(--amber-bg); border:1px solid rgba(200,160,60,.45); border-left:4px solid var(--amber); border-radius:8px; padding:12px 14px; font-size:13px; margin:12px 0; color:var(--amber); }
   .mcard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-bottom:14px;}
   .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:transform .15s,box-shadow .15s;}
   .mcard:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.10);}
@@ -44,10 +84,10 @@
   .mbody{padding:11px 13px;display:flex;flex-direction:column;gap:7px;flex:1;}
   .mbody h4{font-size:13.5px;line-height:1.4;min-height:38px;}
   .mstats{display:flex;flex-wrap:wrap;gap:5px;}
-  .mstats span{font-size:11px;background:#eef3f6;color:#0b7285;border:1px solid #d6e4ea;padding:1px 7px;border-radius:12px;}
+  .mstats span{font-size:11px;background:var(--blue-soft);color:var(--accent2);border:1px solid var(--line);padding:1px 7px;border-radius:12px;}
   .mauthor{font-size:11.5px;color:var(--muted);margin-top:auto;}
   .video-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(310px,1fr)); gap:14px; }
-  .vcard { background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; display:flex; gap:12px; padding:12px; }
+  .vcard { background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; display:flex; gap:12px; padding:12px; }
   .vcard img { width:118px; height:72px; object-fit:cover; border-radius:8px; flex-shrink:0; }
   .vcard .info { flex:1; min-width:0; }
   .vcard .t { font-size:13px; font-weight:600; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
@@ -56,11 +96,26 @@
   .vcard a { color:var(--accent2); font-size:11.5px; text-decoration:none; }
   .rank { background:var(--accent); color:#fff; width:22px; height:22px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; margin-right:6px; }
   footer { margin-top:34px; border-top:1px solid var(--line); padding-top:14px; color:var(--muted); font-size:12px; }
-  .method { background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px 16px; font-size:12.5px; color:#374151; margin-top:14px; }
+  .method { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; font-size:12.5px; color:var(--ink); margin-top:14px; }
   .method b { color:var(--ink); }
 </style>
 </head>
-<body>
+<body data-theme="light">
+<nav class="topnav">
+  <div class="inner">
+    <a class="logo" href="index.html"><span class="mark">⬡</span>一言智造</a>
+    <div class="navtabs">
+      <a href="index.html#workspace">个人工作台</a>
+      <a href="index.html#tools" class="active">3D打印工具</a>
+      <a href="index.html#resources">资源中心</a>
+      <a href="index.html#community">社区交流</a>
+    </div>
+    <div class="nav-right">
+      <button class="tbtn t-light on" data-t="light" title="浅色模式" aria-label="浅色模式"></button>
+      <button class="tbtn t-dark" data-t="dark" title="深色模式" aria-label="深色模式"></button>
+    </div>
+  </div>
+</nav>
 <div class="wrap">
 <header class="hero">
   <h1>🖨️ 3D打印动态日报</h1>
@@ -72,6 +127,7 @@
     <div class="stat"><b>6</b><span>抖音 48h 实测视频</span></div>
     <div class="stat"><b>6</b><span>小红书 48h 实测视频</span></div>
   </div>
+  <div class="btnn"><a class="pbtn" href="index.html">← 返回工作站</a></div>
 </header>
 
 <h2 class="sec"><span class="no">1</span>硬件 / 软件 / 技术 / 应用动态（近 48h · 家用 / 桌面级）</h2>
@@ -920,5 +976,17 @@
   <span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv">-</span> 次 · 今日访客 <span id="busuanzi_value_site_uv">-</span> 人</span>
 </div>
 <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script>
+(function(){
+var THEME_KEY='one3dp_theme';
+function applyTheme(t){
+  document.body.dataset.theme=t;
+  document.querySelectorAll('.tbtn').forEach(function(b){b.classList.toggle('on',b.dataset.t===t);});
+  try{localStorage.setItem(THEME_KEY,t);}catch(e){}
+}
+document.querySelectorAll('.tbtn').forEach(function(b){b.addEventListener('click',function(){applyTheme(b.dataset.t);});});
+try{var sv=localStorage.getItem(THEME_KEY);if(sv)applyTheme(sv);}catch(e){}
+})();
+</script>
 </body>
 </html>

@@ -5,20 +5,68 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3D打印报价计算器</title>
 <style>
+  /* ========== 站点统一导航与主题（与首页一致） ========== */
   :root{
-    --green:#0e6b46; --green-dark:#0a5237; --green-light:#e7f3ee;
-    --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
-    --bg:#f3f4f6; --card:#ffffff; --amber:#b45309; --amber-bg:#fef3c7;
+    --bg:#f3f6fb; --card:#ffffff; --ink:#111827; --muted:#64748b; --line:#e4eaf2;
+    --blue:#2563eb; --blue2:#4f8bfb; --blue-soft:#eaf1fe;
+    --purple:#7c3aed; --purple2:#a78bfa; --purple-soft:#f2ecfd;
+    --teal:#0d9488; --teal2:#2dd4bf; --teal-soft:#e9faf7;
+    --green:#059669; --green2:#34d399; --green-soft:#e8f9f1;
+    --orange:#ea580c; --orange2:#fb923c; --orange-soft:#fdf0e7;
+    --pink:#db2777; --pink2:#f472b6; --pink-soft:#fdeef5;
+    --amber:#b45309; --amber-bg:#fef3c7;
+    --shadow-s:0 1px 2px rgba(15,23,42,.05);
+    --shadow-m:0 12px 32px rgba(15,23,42,.08);
+    --r:16px;
   }
+  body[data-theme="dark"]{
+    --bg:#0b1220; --card:#141a2b; --ink:#e7edf5; --muted:#93a3b8; --line:#26303f;
+    --blue:#4d8dff; --blue2:#8ab1ff; --blue-soft:rgba(77,141,255,.14);
+    --purple:#a78bfa; --purple-soft:rgba(167,139,250,.16);
+    --teal-soft:rgba(45,212,191,.13); --green-soft:rgba(52,211,153,.13);
+    --orange-soft:rgba(251,146,60,.13); --pink-soft:rgba(244,114,182,.13);
+    --amber:#fbbf24; --amber-bg:rgba(251,191,36,.15);
+    --shadow-s:0 1px 2px rgba(0,0,0,.35);
+    --shadow-m:0 12px 32px rgba(0,0,0,.4);
+  }
+  :root{--green:#2563eb;--green-dark:#1e4fb8;--green-light:#eaf1fe}
+  body[data-theme="dark"]{--green:#4d8dff;--green-dark:#3b82f6;--green-light:rgba(77,141,255,.14)}
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:16px}
-  .wrap{max-width:1180px;margin:0 auto}
-  header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px;flex-wrap:wrap}
-  h1{font-size:26px;letter-spacing:.5px}
+  body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .topnav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+  .topnav .inner{display:flex;align-items:center;gap:20px;height:64px;max-width:1280px;margin:0 auto;padding:0 28px}
+  .logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;white-space:nowrap;color:var(--ink)}
+  .logo .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,var(--blue),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 4px 14px rgba(37,99,235,.35)}
+  .navtabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+  .navtabs::-webkit-scrollbar{display:none}
+  .navtabs a{font-size:15px;font-weight:500;color:var(--muted);padding:8px 16px;border-radius:10px;white-space:nowrap;transition:all .15s}
+  .navtabs a:hover{color:var(--blue);background:var(--blue-soft)}
+  .navtabs a.active{color:var(--blue);font-weight:700;background:var(--blue-soft)}
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .tbtn{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;transition:transform .15s,box-shadow .15s;background:transparent}
+  .tbtn:hover{transform:scale(1.12)}
+  .tbtn.on{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .tbtn.t-light{background:linear-gradient(135deg,#fff 50%,var(--blue) 50%)}
+  .tbtn.t-dark{background:linear-gradient(135deg,#10182f 50%,#58a6ff 50%)}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px 18px 40px}
+  .page-hero{background:linear-gradient(135deg,var(--blue) 0%,var(--blue2) 52%,var(--purple) 125%);color:#fff;border-radius:var(--r);padding:22px 26px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:var(--shadow-m);margin-bottom:18px}
+  .page-hero h1{font-size:24px;letter-spacing:.5px}
+  .page-hero .sub{color:rgba(255,255,255,.9)}
+  .page-hero .acts{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   .sub{color:var(--muted);font-size:13px;margin-top:6px}
-  .badges{display:flex;gap:10px;flex-wrap:wrap}
-  .badge{background:var(--green);color:#fff;font-size:13px;padding:8px 14px;border-radius:8px;white-space:nowrap}
+  .badge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);color:#fff;font-size:13px;padding:8px 14px;border-radius:999px;white-space:nowrap}
   .badge b{font-weight:700}
+  .pbtn{font-size:12.5px;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.45);padding:7px 14px;border-radius:999px;cursor:pointer;font-weight:600;font-family:inherit;text-decoration:none;transition:background .15s}
+  .pbtn:hover{background:rgba(255,255,255,.3)}
+  @media (max-width:640px){
+    .topnav .inner{flex-wrap:wrap;row-gap:4px;height:auto;padding:12px 16px 8px}
+    .navtabs{order:3;width:100%;flex:none}
+    .nav-right{gap:8px}
+    .navtabs a{padding:8px 12px}
+    .page-hero{padding:18px;align-items:flex-start}
+    .page-hero .acts{margin-left:0;width:100%}
+  }
   .grid{display:grid;grid-template-columns:322px 1fr;gap:12px;align-items:stretch}
   @media(max-width:900px){.grid{grid-template-columns:1fr}}
   .card{background:var(--card);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
@@ -66,18 +114,33 @@
   .toast.show{opacity:.92}
 </style>
 </head>
-<body>
+<body data-theme="light">
+<nav class="topnav">
+  <div class="inner">
+    <a class="logo" href="index.html"><span class="mark">⬡</span>一言智造</a>
+    <div class="navtabs">
+      <a href="index.html#workspace">个人工作台</a>
+      <a href="index.html#tools" class="active">3D打印工具</a>
+      <a href="index.html#resources">资源中心</a>
+      <a href="index.html#community">社区交流</a>
+    </div>
+    <div class="nav-right">
+      <button class="tbtn t-light on" data-t="light" title="浅色模式" aria-label="浅色模式"></button>
+      <button class="tbtn t-dark" data-t="dark" title="深色模式" aria-label="深色模式"></button>
+    </div>
+  </div>
+</nav>
 <div class="wrap">
-  <header>
+  <div class="page-hero">
     <div>
       <h1>3D打印报价计算器</h1>
       <div class="sub">输入产品配置、生产数量和日出产量，系统会综合固定成本与每日利润摊销给出元件报价。</div>
     </div>
-    <div class="badges">
+    <div class="acts">
       <div class="badge">电费 <b id="badgeElec">¥1.00</b>/天</div>
       <div class="badge">设备折旧 <b id="badgeDep">¥3.90</b>/天</div>
     </div>
-  </header>
+  </div>
 
   <div class="grid">
     <!-- ============ 左：报价参数 ============ -->
@@ -294,6 +357,18 @@ $('btnCopy').addEventListener('click',()=>{
 });
 
 calc();
+</script>
+<script>
+(function(){
+var THEME_KEY='one3dp_theme';
+function applyTheme(t){
+  document.body.dataset.theme=t;
+  document.querySelectorAll('.tbtn').forEach(function(b){b.classList.toggle('on',b.dataset.t===t);});
+  try{localStorage.setItem(THEME_KEY,t);}catch(e){}
+}
+document.querySelectorAll('.tbtn').forEach(function(b){b.addEventListener('click',function(){applyTheme(b.dataset.t);});});
+try{var sv=localStorage.getItem(THEME_KEY);if(sv)applyTheme(sv);}catch(e){}
+})();
 </script>
 <div class="pv-bar" style="text-align:center;color:#8a919c;font-size:12px;margin:16px auto 8px;line-height:1.8;">
   <span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv">-</span> 次 · 今日访客 <span id="busuanzi_value_site_uv">-</span> 人</span>
