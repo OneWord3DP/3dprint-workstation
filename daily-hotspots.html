@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3D打印每日热点 · 3D打印工作站</title>
+<title>3D打印每日热点 · 3D打印工作台</title>
 <style>
-/* ===== 站点统一导航与主题（与首页一致） ===== */
   :root{
     --bg:#f3f6fb; --card:#ffffff; --ink:#111827; --muted:#64748b; --line:#e4eaf2;
     --blue:#2563eb; --blue2:#4f8bfb; --blue-soft:#eaf1fe;
@@ -14,9 +13,9 @@
     --shadow-m:0 12px 32px rgba(15,23,42,.08);
     --r:16px;
   }
-  body[data-theme="dark"]{
+  body[data-theme=\"dark\"]{
     --bg:#0b1220; --card:#141a2b; --ink:#e7edf5; --muted:#93a3b8; --line:#26303f;
-    --blue:#4d8dff; --blue2:#8ab1ff; --blue-soft:rgba(77,141,255,.14);
+    --blue:#4d8dff; --blue-soft:rgba(77,141,255,.14);
     --purple:#a78bfa; --purple-soft:rgba(167,139,250,.16);
     --shadow-s:0 1px 2px rgba(0,0,0,.35);
     --shadow-m:0 12px 32px rgba(0,0,0,.4);
@@ -24,9 +23,9 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;transition:background .25s,color .25s;-webkit-font-smoothing:antialiased}
   a{color:inherit;text-decoration:none}
-  .topnav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+  .topnav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
   .topnav .inner{display:flex;align-items:center;gap:20px;height:64px;max-width:1280px;margin:0 auto;padding:0 28px}
-  .logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;white-space:nowrap;color:var(--ink)}
+  .logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;white-space:nowrap}
   .logo .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,var(--blue),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 4px 14px rgba(37,99,235,.35)}
   .navtabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
   .navtabs::-webkit-scrollbar{display:none}
@@ -39,32 +38,37 @@
   .tbtn.on{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
   .tbtn.t-light{background:linear-gradient(135deg,#fff 50%,var(--blue) 50%)}
   .tbtn.t-dark{background:linear-gradient(135deg,#10182f 50%,#58a6ff 50%)}
-  .page-wrap{max-width:1280px;margin:0 auto;padding:20px 20px 0}
-  .page-hero{background:linear-gradient(135deg,var(--blue) 0%,var(--blue2) 52%,var(--purple) 125%);color:#fff;border-radius:var(--r);padding:22px 26px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:var(--shadow-m);margin-bottom:18px}
+  .page-wrap{max-width:1280px;margin:0 auto;padding:20px 28px 0}
+  .page-hero{background:linear-gradient(135deg,var(--blue) 0%,var(--blue2) 52%,var(--purple) 125%);color:#fff;border-radius:var(--r);padding:22px 26px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:var(--shadow-m);margin-bottom:20px}
   .page-hero h1{font-size:21px;letter-spacing:.4px}
   .page-hero .sub{font-size:13px;opacity:.9;margin-top:4px;line-height:1.6}
   .page-hero .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   .pbtn{font-size:12.5px;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.45);padding:7px 14px;border-radius:999px;cursor:pointer;font-weight:600;font-family:inherit;text-decoration:none;transition:background .15s}
   .pbtn:hover{background:rgba(255,255,255,.3)}
-  .frame-shell{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-m);overflow:hidden;padding:10px}
-  iframe{width:100%;height:calc(100vh - 190px);min-height:720px;border:none;display:block;background:#fff;border-radius:10px}
-  .tip{max-width:760px;margin:22px auto;text-align:center;color:var(--muted);font-size:12.5px;line-height:1.9;padding:0 20px}
-  .credit{text-align:center;color:var(--muted);font-size:11.5px;margin:14px auto 6px;line-height:1.8}
-  @media (max-width:640px){
+  .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:20px}
+  .qcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow-s);display:flex;flex-direction:column;gap:8px;transition:all .16s}
+  .qcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-m);border-color:var(--blue)}
+  .qcard .qt{font-size:16.5px;font-weight:800}
+  .qcard .qd{font-size:12.5px;color:var(--muted);line-height:1.7;flex:1}
+  .qcard .open{color:var(--blue);font-weight:700;font-size:13.5px}
+  .acard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow-s)}
+  .acard .at{font-size:16.5px;font-weight:800;margin-bottom:10px}
+  .archrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:10px;transition:all .14s}
+  .archrow:hover{background:var(--blue-soft);color:var(--blue)}
+  .archrow .hg{font-size:12.5px;color:var(--blue)}
+  .credit{text-align:center;color:var(--muted);font-size:12px;margin:22px auto 8px;line-height:1.8}
+  @media (max-width:860px){
+    .grid3{grid-template-columns:1fr}
     .topnav .inner{flex-wrap:wrap;row-gap:4px;height:auto;padding:12px 16px 8px}
     .navtabs{order:3;width:100%;flex:none}
-    .nav-right{gap:8px}
-    .navtabs a{padding:8px 12px}
     .page-wrap{padding:14px 12px 0}
     .page-hero{padding:18px;align-items:flex-start}
     .page-hero h1{font-size:18px}
     .page-hero .acts{margin-left:0}
-    iframe{height:calc(100vh - 230px);min-height:560px}
   }
 </style>
 </head>
-<body data-theme="light">
-<nav class="topnav">
+<body data-theme="light"><nav class="topnav">
   <div class="inner">
     <a class="logo" href="index.html"><span class="mark">⬡</span>一言智造</a>
     <div class="navtabs">
@@ -74,8 +78,8 @@
       <a href="index.html#community">社区交流</a>
     </div>
     <div class="nav-right">
-      <button class="tbtn t-light on" data-t="light" title="浅色模式" aria-label="浅色模式"></button>
-      <button class="tbtn t-dark" data-t="dark" title="深色模式" aria-label="深色模式"></button>
+      <button class="tbtn t-light on" title="浅色模式" aria-label="浅色模式"></button>
+      <button class="tbtn t-dark" title="深色模式" aria-label="深色模式"></button>
     </div>
   </div>
 </nav>
@@ -83,49 +87,57 @@
   <div class="page-hero">
     <div>
       <h1>📰 3D打印每日热点</h1>
-      <div class="sub" id="meta">每天 09:00 自动生成并同步</div>
+      <div class="sub">每天 09:00 自动生成并同步，直达最新日报 / 国际版 / 历史归档</div>
     </div>
     <div class="acts">
-      <button class="pbtn" onclick="reload()">↻ 刷新</button>
-      <a class="pbtn" href="https://oneword3dp.github.io/3dprint-workstation/daily-report.html" target="_blank" rel="noopener">↗ 新窗口打开</a>
+      <a class="pbtn" href="daily-report.html">→ 今日日报</a>
+      <a class="pbtn" href="intl-report.html">🌍 国际版</a>
       <a class="pbtn" href="index.html">← 返回工作站</a>
     </div>
   </div>
-  <div class="frame-shell">
-    <iframe id="frame" src="https://oneword3dp.github.io/3dprint-workstation/daily-report.html" title="每日热点报告"></iframe>
+  <div class="grid3">
+    <a class="qcard" href="daily-report.html">
+      <div class="qt">今日国内日报</div>
+      <div class="qd">动态 9 条 / 模型榜（仅国内区）12 条 / B站 · 抖音 · 小红书视频热点，覆盖近 48 小时窗口；封面外链加载更轻。</div>
+      <div class="open">打开日报 ↗</div>
+    </a>
+    <a class="qcard" href="intl-report.html">
+      <div class="qt">🌍 国际版热点</div>
+      <div class="qd">国际站 MakerWorld / Printables 模型与 3D 打印国际新闻，独立维护，满足国际视角。</div>
+      <div class="open">打开国际版 ↗</div>
+    </a>
+    <a class="qcard" href="history.html">
+      <div class="qt">🗂 历史归档</div>
+      <div class="qd">全部历史日报列表，按日期倒序排列，随时回看往期内容。</div>
+      <div class="open">查看归档 ↗</div>
+    </a>
   </div>
-  <div class="tip" id="tip" style="display:none">若上方空白，说明今天的日报还在生成中（每天 09:00 自动跑），或浏览器拦截了内嵌内容，点「新窗口打开」即可查看。</div>
+  <div class="acard">
+    <div class="at">📂 历史日报（10 期）</div>
+    <a class="archrow" href="archive/3dprint-daily-2026-09-12.html" target="_blank" rel="noopener"><span class="hd">2026-09-12</span><span class="hg">打开 ↗</span></a>
+    <a class="archrow" href="archive/3dprint-daily-2026-09-11.html" target="_blank" rel="noopener"><span class="hd">2026-09-11</span><span class="hg">打开 ↗</span></a>
+    <a class="archrow" href="archive/3dprint-daily-2026-09-10.html" target="_blank" rel="noopener"><span class="hd">2026-09-10</span><span class="hg">打开 ↗</span></a>
+    <a class="archrow" href="archive/3dprint-daily-2026-09-08.html" target="_blank" rel="noopener"><span class="hd">2026-09-08</span><span class="hg">打开 ↗</span></a>
+    <a class="archrow" href="archive/3dprint-daily-2026-09-08-evening.html" target="_blank" rel="noopener"><span class="hd">2026-09-08（晚间版）</span><span class="hg">打开 ↗</span></a>
+    <a class="archrow" href="archive/3dprint-daily-2026-09-07.html" target="_blank" rel="noopener"><span class="hd">2026-09-07</span><span class="hg">打开 ↗</span></a>
+    <a class="archrow" href="archive/3dprint-daily-2026-09-06.html" target="_blank" rel="noopener"><span class="hd">2026-09-06</span><span class="hg">打开 ↗</span></a>
+    <a class="archrow" href="archive/3dprint-daily-2026-09-04.html" target="_blank" rel="noopener"><span class="hd">2026-09-04</span><span class="hg">打开 ↗</span></a>
+    <a class="archrow" href="archive/3dprint-daily-2026-09-02.html" target="_blank" rel="noopener"><span class="hd">2026-09-02</span><span class="hg">打开 ↗</span></a>
+    <a class="archrow" href="archive/3dprint-daily-2026-09-01.html" target="_blank" rel="noopener"><span class="hd">2026-09-01</span><span class="hg">打开 ↗</span></a>
+  </div>
 </div>
-<div class="credit">数据源：GitHub 主版本仓库，每日自动更新 · 作者：一言智造One3DP</div>
-<script>
-var SRC='https://oneword3dp.github.io/3dprint-workstation/daily-report.html';
-function reload(){
-  var f=document.getElementById('frame');
-  f.src=SRC+'?t='+Date.now();
-  document.getElementById('meta').textContent='已刷新 · '+new Date().toLocaleTimeString('zh-CN',{hour12:false});
-}
-(function(){
-var THEME_KEY='one3dp_theme';
-function applyTheme(t){
-  document.body.dataset.theme=t;
-  document.querySelectorAll('.tbtn').forEach(function(b){b.classList.toggle('on',b.dataset.t===t);});
-  try{localStorage.setItem(THEME_KEY,t);}catch(e){}
-}
-document.querySelectorAll('.tbtn').forEach(function(b){b.addEventListener('click',function(){applyTheme(b.dataset.t);});});
-try{var sv=localStorage.getItem(THEME_KEY);if(sv)applyTheme(sv);}catch(e){}
-})();
-setTimeout(function(){
-  try{
-    var f=document.getElementById('frame');
-    var ok=false;
-    try{ok=!!(f.contentDocument&&f.contentDocument.body&&f.contentDocument.body.innerHTML.trim());}catch(e){ok=true;}
-    if(!ok)document.getElementById('tip').style.display='block';
-  }catch(e){}
-},5000);
-</script>
-<div class="pv-bar" style="text-align:center;color:#8a919c;font-size:12px;margin:16px auto 8px;line-height:1.8;">
+<div class="pv-bar" style="text-align:center;color:#8a919c;font-size:12px;margin:14px auto 6px;line-height:1.8;">
   <span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv">-</span> 次 · 今日访客 <span id="busuanzi_value_site_uv">-</span> 人</span>
 </div>
+<div class="credit">持续更新 · 作者：一言智造One3DP · <a href="index.html" style="color:var(--blue)">返回工作站</a></div>
+<script>
+(function(){
+  var THEME_KEY='one3dp_theme';
+  function applyTheme(t){document.body.dataset.theme=t;document.querySelectorAll('.tbtn').forEach(function(b){b.classList.toggle('on',b.dataset.t===t);});try{localStorage.setItem(THEME_KEY,t);}catch(e){}}
+  document.querySelectorAll('.tbtn').forEach(function(b){b.addEventListener('click',function(){applyTheme(b.dataset.t);});});
+  try{var sv=localStorage.getItem(THEME_KEY);if(sv)applyTheme(sv);}catch(e){}
+})();
+</script>
 <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </body>
 </html>
