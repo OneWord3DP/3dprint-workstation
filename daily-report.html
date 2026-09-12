@@ -103,6 +103,10 @@
   .stat.restricted{background:rgba(251,191,36,.22);border-color:rgba(251,191,36,.6);}
   .notice.red{background:#fdeceb;border:1px solid #f3c0bd;border-left:4px solid #e03131;color:#6b211e;}
   body[data-theme="dark"] .notice.red{background:rgba(224,49,49,.15);border-color:rgba(224,49,49,.4);border-left-color:#f87171;color:#fca5a5;}
+
+/* 无真实图条目：主题渐变色块（不使用占位图层） */
+.imgbox .noimg,.mimg .noimg{display:block;width:100%;height:100%;background:linear-gradient(135deg,var(--blue-soft),var(--purple-soft));}
+.imgbox .noimg::after,.mimg .noimg::after{content:"⬡";display:flex;align-items:center;justify-content:center;height:100%;font-size:34px;opacity:.3;color:var(--blue);}
 </style>
 </head>
 <body data-theme="light">
@@ -124,13 +128,13 @@
 <div class="wrap">
 <header class="hero">
   <h1>🖨️ 3D打印动态日报</h1>
-  <div class="sub">9月13日 · 星期日 · 北京时间 UTC+8 · 覆盖窗口：2026-09-11 04:33 ~ 2026-09-13 04:33（近 48 小时）</div>
+  <div class="sub">9月13日 · 星期日 · 北京时间 UTC+8 · 覆盖窗口：2026-09-11 04:50 ~ 2026-09-13 04:50（近 48 小时）</div>
   <div class="statbar"><div class="stat"><b>9</b><span>硬件/软件/技术/应用动态</span></div><div class="stat"><b>12</b><span>模型榜（仅国内区 12）</span></div><div class="stat"><b>6</b><span>抖音 48h 实测视频</span></div><div class="stat"><b>6</b><span>小红书 48h 实测视频</span></div></div>
   <div class="btns"><a class="pbtn" href="index.html">← 返回工作站</a></div>
 </header>
 
 <h2 class="sec"><span class="no">1</span>硬件 / 软件 / 技术 / 应用动态（近 48h · 家用 / 桌面级）</h2>
-<div class="lead">只收录 2026-09-11 04:33 ~ 2026-09-13 04:33（近 48 小时） 窗口内、面向家用与桌面场景的事件：硬件（消费级 FDM / 树脂 / UV / 激光 / 扫描、桌面级专业机、家用龙头零售与资本动态）、软件（切片软件与 AI 建模工具更新、APP / 固件 / 云服务）、技术（桌面级新工艺 / 新材料 / 新方法）、应用（消费级文创 / 教育 / 医疗 / 材料工艺等落地案例）；工业金属粉末、军工、航天、汽车量产等工业内容已按要求排除。共 9 条（3 列网格；本期 硬件 4 / 材料 2 / 软件 1 / 应用 2）。</div>
+<div class="lead">只收录 2026-09-11 04:50 ~ 2026-09-13 04:50（近 48 小时） 窗口内、面向家用与桌面场景的事件：硬件（消费级 FDM / 树脂 / UV / 激光 / 扫描、桌面级专业机、家用龙头零售与资本动态）、软件（切片软件与 AI 建模工具更新、APP / 固件 / 云服务）、技术（桌面级新工艺 / 新材料 / 新方法）、应用（消费级文创 / 教育 / 医疗 / 材料工艺等落地案例）；工业金属粉末、军工、航天、汽车量产等工业内容已按要求排除。共 9 条（3 列网格；本期 硬件 4 / 材料 2 / 软件 1 / 应用 2）。</div>
 <div class="grid">
 
   <div class="card">
@@ -360,7 +364,7 @@
 </div>
 
 <h2 class="sec"><span class="no">3</span>视频热点 · B站 48 小时内最火</h2>
-<div class="lead">通过 B 站 WBI 签名搜索接口（<code>api.bilibili.com/x/web-interface/wbi/search/type</code>）抓取，并用 <code>x/web-interface/view</code> 接口核验真实播放 / 点赞 / 弹幕；窗口为 2026-09-11 04:33 ~ 2026-09-13 04:33（近 48 小时）（截止 2026-09-11 01:35:23），按真实播放量排序取前 9（播放 / 点赞 / 弹幕为接口真实值）。封面用 view 接口 pic 字段（视频页 og:image 同源缩略图），已 base64 内嵌。</div>
+<div class="lead">通过 B 站 WBI 签名搜索接口（<code>api.bilibili.com/x/web-interface/wbi/search/type</code>）抓取，并用 <code>x/web-interface/view</code> 接口核验真实播放 / 点赞 / 弹幕；窗口为 2026-09-11 04:50 ~ 2026-09-13 04:50（近 48 小时）（截止 2026-09-11 01:35:23），按真实播放量排序取前 9（播放 / 点赞 / 弹幕为接口真实值）。封面用 view 接口 pic 字段（视频页 og:image 同源缩略图），已 base64 内嵌。</div>
 <div class="video-list">
 
   <div class="vcard">
@@ -455,7 +459,7 @@
 </div>
 
 <h2 class="sec"><span class="no">4</span>视频热点 · 抖音 48h 实测（登录后搜索，近 48h）</h2>
-<div class="lead">在<b>抖音登录态</b>下，经抖音搜索「3D打印」、筛选面板选「最新发布 + 一周内」后实测采集（快照 2026-09-13 04:33 CST，索引：<a href="https://www.douyin.com/search/3D%E6%89%93%E5%8D%B0?type=video" target="_blank" rel="noopener">douyin.com/search/3D打印?type=video</a>），再人工核为近 48h 内发布，按点赞量排序取 6 条。<b>需显著说明：抖音网页版不暴露精确播放量（仅 App 展示）</b>，页面可实测的互动口径为赞 / 评 / 藏；本板块赞数为搜索页卡片实测值，评论 / 收藏网页版不暴露，作者与相对时间均逐条实测。网页版不提供可抓取封面，统一使用「3D打印工作站」主题占位图，未编造任何数据。</div>
+<div class="lead">在<b>抖音登录态</b>下，经抖音搜索「3D打印」、筛选面板选「最新发布 + 一周内」后实测采集（快照 2026-09-13 04:50 CST，索引：<a href="https://www.douyin.com/search/3D%E6%89%93%E5%8D%B0?type=video" target="_blank" rel="noopener">douyin.com/search/3D打印?type=video</a>），再人工核为近 48h 内发布，按点赞量排序取 6 条。<b>需显著说明：抖音网页版不暴露精确播放量（仅 App 展示）</b>，页面可实测的互动口径为赞 / 评 / 藏；本板块赞数为搜索页卡片实测值，评论 / 收藏网页版不暴露，作者与相对时间均逐条实测。网页版不提供可抓取封面，统一使用「3D打印工作站」主题占位图，未编造任何数据。</div>
 <div class="video-list">
 
   <div class="vcard">
@@ -520,7 +524,7 @@
 </div>
 
 <h2 class="sec"><span class="no">5</span>视频热点 · 小红书 48h 实测（登录后搜索，视频分类）</h2>
-<div class="lead">在<b>小红书登录态</b>下打开搜索「3D打印」视频分类实测采集（快照 2026-09-13 04:33 CST），人工核为近 48h，按点赞排序取 6 条；点赞为搜索页卡片实测值，网页版不暴露精确播放量，封面统一使用主题占位图，未编造数据。</div>
+<div class="lead">在<b>小红书登录态</b>下打开搜索「3D打印」视频分类实测采集（快照 2026-09-13 04:50 CST），人工核为近 48h，按点赞排序取 6 条；点赞为搜索页卡片实测值，网页版不暴露精确播放量，封面统一使用主题占位图，未编造数据。</div>
 <div class="video-list">
 
   <div class="vcard">
@@ -586,14 +590,14 @@
 
 <div class="method">
 <b>数据与口径说明：</b><br>
-① <b>动态板块（硬件/软件/技术/应用）</b>：仅收录 2026-09-11 04:33 ~ 2026-09-13 04:33（近 48 小时） 窗口内、已逐条核验来源页<b>原始发布时间</b>的家用/桌面级事件（不采信站点 last_update/更新时间）；工业金属粉末、军工、航天、汽车量产等工业内容已排除。配图优先取来源页 og:image / 正文图，无真实图统一使用「3D打印工作站」主题占位图。<br>
-② <b>模型板块 · 本周热门（国内版口径）</b>：数据来自 MakerWorld 官方<b>热门（Trending）榜</b>接口国内区（快照 2026-09-13 01:35:14），仅取前 12 名；MakerWorld 无独立「周榜」页面，官方热门榜即「本周热度」最接近口径；每条列<b>下载/点赞/打印/收藏</b>四维实时计数，已跳过缓存中已报道模型（48 个）。国际版与 Printables 模型按国内版要求不收录，国际热点请见独立国际版页面。<br>
+① <b>动态板块（硬件/软件/技术/应用）</b>：仅收录 2026-09-11 04:50 ~ 2026-09-13 04:50（近 48 小时） 窗口内、已逐条核验来源页<b>原始发布时间</b>的家用/桌面级事件（不采信站点 last_update/更新时间）；工业金属粉末、军工、航天、汽车量产等工业内容已排除。配图优先取来源页 og:image / 正文图，无真实图统一使用「3D打印工作站」主题占位图。<br>
+② <b>模型板块 · 本周热门（周榜口径）</b>：数据来自 MakerWorld 官方<b>热门（Trending）榜</b>接口（国内 2026-09-13 01:35:14 / 国际 2026-09-13 01:35:05），双区各取前 12；MakerWorld 无独立「周榜」页面，官方热门榜即「本周热度」最接近口径；每条列<b>下载/点赞/打印/收藏</b>四维实时计数，已跳过缓存中已报道模型（国内 48 / 国际 52）。另纳入 Printables Trending（近 30 天，2026-09-13 04:50 CST）前 12，字段为下载/评分/赞，链接用作者主页 + 站内搜索，与上期重叠 0 条已标注。<br>
 ③ <b>视频板块 · B站</b>：WBI 签名（mixin key + wts + w_rid）实现搜索签名；播放/点赞/弹幕由 <code>x/web-interface/view</code> stat 字段核验，非页面估算；封面用 view 接口 pic（https + Referer 下载）后 base64 内嵌。<br>
-④ <b>视频板块 · 抖音</b>：登录态搜索「3D打印」筛选「最新发布 + 一周内」后人工核 48h（快照 2026-09-13 04:33 CST），共 6 条；赞数为搜索页卡片实测值，网页版不暴露精确播放量/评论/收藏，未将点赞误报为播放；封面无 og:image 统一用主题占位图。<br>
-⑤ <b>视频板块 · 小红书</b>：登录态搜索视频分类实测 6 条（快照 2026-09-13 04:33 CST），点赞为搜索页实测值，网页版不暴露播放量，封面用主题占位图，未编造。<br>⑥ 本报告条目写入工作目录去重缓存 <code>3dprint-reported-cache.json</code>，供后续日报跳过重复报道（模型/视频与国际版允许 48h 内重复，但国内日报仍按缓存跳过已报道）。
+④ <b>视频板块 · 抖音</b>：登录态搜索「3D打印」筛选「最新发布 + 一周内」后人工核 48h（快照 2026-09-13 04:50 CST），共 6 条；赞数为搜索页卡片实测值，网页版不暴露精确播放量/评论/收藏，未将点赞误报为播放；封面无 og:image 统一用主题占位图。<br>
+⑤ <b>视频板块 · 小红书</b>：登录态搜索视频分类实测 6 条（快照 2026-09-13 04:50 CST），点赞为搜索页实测值，网页版不暴露播放量，封面用主题占位图，未编造。<br>⑥ 本报告条目写入工作目录去重缓存 <code>3dprint-reported-cache.json</code>，供后续日报跳过重复报道（模型/视频与国际版允许 48h 内重复，但国内日报仍按缓存跳过已报道）。
 </div>
 <footer>
-快照时间：2026-09-13 04:33:37（CST）· 模型周榜快照 国内 2026-09-13 01:35:14 / 国际 2026-09-13 01:35:05 / Printables 2026-09-13 04:33 CST · 视频窗口截止 2026-09-11 01:35:23 · 动态 9 条 / 模型 12 条（仅国内区) / B站 9 条 / 抖音 6 条 / 小红书 6 条实测 · 由 一言智造One3DP 生成自包含 HTML 报告，封面图以外链方式发布（covers/）
+快照时间：2026-09-13 04:50:07（CST）· 模型周榜快照 国内 2026-09-13 01:35:14 / 国际 2026-09-13 01:35:05 / Printables 2026-09-13 04:50 CST · 视频窗口截止 2026-09-11 01:35:23 · 动态 9 条 / 模型 12 条（MW 双区各 12 + Printables 12） / B站 9 条 / 抖音 6 条 / 小红书 6 条实测 · 由 一言智造One3DP 生成自包含 HTML 报告，封面图以独立文件随站点发布（covers/）
 </footer>
 </div>
 <div class="pv-bar" style="text-align:center;color:#8a919c;font-size:12px;margin:16px auto 8px;line-height:1.8;">
