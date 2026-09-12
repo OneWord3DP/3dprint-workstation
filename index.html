@@ -103,6 +103,19 @@ body[data-theme="dark"] .hero-art{background:linear-gradient(150deg,#122c52,#1b3
 .art-go{position:absolute;top:14px;left:16px;z-index:3;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;box-shadow:0 6px 16px rgba(0,0,0,.18);transition:background .15s}
 .hero-art-link:hover .art-go{background:rgba(255,255,255,.26)}
 
+
+/* ===== 首页热点双卡 ===== */
+.hot-stack{display:flex;flex-direction:column;gap:14px}
+.hot-card{display:flex;align-items:center;gap:14px;padding:17px 20px;border-radius:20px;background:linear-gradient(140deg,var(--card),color-mix(in srgb,var(--card) 88%,var(--blue)));border:1px solid var(--line);box-shadow:var(--shadow-s);transition:transform .18s,box-shadow .18s,border-color .18s;color:var(--ink)}
+.hot-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-m);border-color:var(--blue)}
+.hot-card .hc-ico{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;background:var(--blue-soft);flex:none}
+.hot-card .hc-intl{background:var(--purple-soft)}
+.hot-card .hc-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.hot-card .hc-t b{font-size:16px;font-weight:800}
+.hot-card .hc-t small{font-size:12px;color:var(--muted)}
+.hot-card .hc-go{margin-left:auto;font-weight:800;color:var(--blue);font-size:16px}
+@media (max-width:1080px){.hot-stack{flex-direction:row}}
+@media (max-width:640px){.hot-stack{flex-direction:column}}
 /* ===== 功能卡片 ===== */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(182px,1fr));gap:16px;padding:6px 0 4px}
 .fcard{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px 18px 18px;display:flex;flex-direction:column;min-height:196px;cursor:pointer;transition:transform .18s cubic-bezier(.2,.8,.3,1),box-shadow .18s,border-color .18s;color:var(--ink)}
@@ -246,9 +259,8 @@ footer{margin-top:48px;border-top:1px solid var(--line);background:var(--card)}
     <div class="sb-cap">工作台</div>
     <a class="sb-item active" href="#workspace"><span class="i">🏠</span>个人工作台</a>
     <span class="sb-item" role="button" tabindex="0" onclick="openModal('favModal')"><span class="i">⭐</span>我的收藏</span>
-    <a class="sb-item" href="history.html"><span class="i">🕘</span>热点存档</a>
     <span class="sb-item" role="button" tabindex="0" onclick="openModal('setModal')"><span class="i">⚙️</span>设置中心</span>
-    <div class="sb-foot">一言智造 One3DP<br>你的 3D 打印一站式工具箱</div>
+    <div class="sb-foot" style="opacity:.45">3D 打印 · 工作台<br><a href="history.html">历史归档</a></div>
   </aside>
 
   <!-- 主内容 -->
@@ -262,43 +274,20 @@ footer{margin-top:48px;border-top:1px solid var(--line);background:var(--card)}
           <p class="sub" data-reveal>让 3D 打印更简单 · 让创意更高效。每日热点、报价、耗材与资料，一页尽在掌握。</p>
           <div class="hero-cta" data-reveal>
             <a class="btn btn-primary" href="#tools">开始使用 →</a>
-            <a class="btn btn-ghost" href="history.html">🕘 热点存档</a>
           </div>
         </div>
-        <a class="hero-art-link" href="daily-hotspots.html" title="打开国内每日热点" aria-label="打开国内每日热点">
-        <div class="hero-art" data-reveal>
-          <div class="art-cube">⬡</div>
-          <svg class="hero-svg" viewBox="0 0 360 252" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <circle cx="26" cy="48" r="3" fill="#7ee0c4" opacity=".8"/>
-            <circle cx="318" cy="40" r="3" fill="#9ecbff"/>
-            <circle cx="326" cy="112" r="2.5" fill="#7ee0c4" class="pulse"/>
-            <circle cx="58" cy="186" r="2.5" fill="#ffd166" opacity=".9"/>
-            <g>
-              <circle cx="262" cy="48" r="32" stroke="rgba(255,255,255,.9)" stroke-width="5"/>
-              <circle cx="262" cy="48" r="9" fill="rgba(255,255,255,.28)"/>
-              <path d="M262 82 C 262 116 220 122 198 100" stroke="#ffd166" stroke-width="4.5" stroke-linecap="round"/>
-            </g>
-            <rect x="78" y="58" width="176" height="14" rx="7" fill="#9ecbff" opacity=".95"/>
-            <rect x="88" y="70" width="12" height="104" rx="6" fill="rgba(255,255,255,.55)"/>
-            <rect x="226" y="70" width="12" height="104" rx="6" fill="rgba(255,255,255,.55)"/>
-            <rect x="58" y="58" width="12" height="136" rx="6" fill="rgba(255,255,255,.38)"/>
-            <rect x="62" y="66" width="4" height="120" rx="2" fill="#7ee0c4" opacity=".65"/>
-            <rect x="68" y="102" width="88" height="10" rx="5" fill="rgba(255,255,255,.7)"/>
-            <rect x="150" y="106" width="66" height="46" rx="16" fill="#ffffff"/>
-            <rect x="158" y="120" width="26" height="12" rx="4" fill="rgba(21,45,105,.18)"/>
-            <circle cx="102" cy="112" r="4" fill="#7ee0c4" class="pulse"/>
-            <path d="M176 152 h18 l-10 24 z" fill="#7ee0c4"/>
-            <path class="ext" d="M182 182 V 194" stroke="#ffd166" stroke-width="4" stroke-linecap="round"/>
-            <rect x="66" y="196" width="196" height="16" rx="8" fill="rgba(255,255,255,.16)" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
-            <rect x="66" y="212" width="196" height="9" rx="4.5" fill="rgba(9,20,46,.4)"/>
-            <ellipse cx="184" cy="206" rx="40" ry="6" fill="#7ee0c4" opacity=".28"/>
-            <rect x="156" y="164" width="52" height="32" rx="7" fill="#ffd166"/>
-            <rect x="156" y="164" width="52" height="9" rx="4.5" fill="rgba(255,255,255,.32)"/>
-          </svg>
-          <div class="art-tag">ONE·3DP WORKSTATION</div>
-          <span class="art-go">📰 国内每日热点 →</span>
-        </div>
-        </a>
+        <div class="hot-stack" data-reveal>
+  <a class="hot-card" href="daily-report.html" title="国内每日热点">
+    <span class="hc-ico hc-cn">🇨🇳</span>
+    <span class="hc-t"><b>国内每日热点</b><small>动态 · 模型榜 · 视频（近 48h）</small></span>
+    <span class="hc-go">→</span>
+  </a>
+  <a class="hot-card" href="intl-report.html" title="国际热点">
+    <span class="hc-ico hc-intl">🌐</span>
+    <span class="hc-t"><b>国际热点</b><small>全球 3D 打印动态与模型</small></span>
+    <span class="hc-go">→</span>
+  </a>
+</div>
       </div>
 
       <!-- 功能卡片 -->
@@ -485,12 +474,14 @@ footer{margin-top:48px;border-top:1px solid var(--line);background:var(--card)}
 <footer>
   <div class="wrap">
     <div class="footer-inner">
-      <span class="footer-slogan">用工具连接创意 · 让3D打印更有趣</span>
+      <span class="footer-slogan" style="font-size:11.5px;font-weight:600;opacity:.5;letter-spacing:1px">3D PRINT WORKSTATION</span>
       <span class="footer-brand">
         <span class="cube">⬡</span>
-        一言智造 · 你的3D打印好帮手 ·
-        <a href="history.html">热点存档</a> ·
-        <a href="https://github.com/OneWord3DP/3dprint-workstation" target="_blank" rel="noopener">GitHub</a>
+         <span style="opacity:.35">一言智造</span> · 官方账号：
+        <a href="https://search.bilibili.com/all?keyword=%E4%B8%80%E8%A8%80%E6%99%BA%E9%80%A0" target="_blank" rel="noopener">B站</a> ·
+        <a href="https://www.douyin.com/search/%E4%B8%80%E8%A8%80%E6%99%BA%E9%80%A0?type=user" target="_blank" rel="noopener">抖音</a> ·
+        <a href="https://www.xiaohongshu.com/search_result?keyword=%E4%B8%80%E8%A8%80%E6%99%BA%E9%80%A0" target="_blank" rel="noopener">小红书</a> ·
+        <a href="https://github.com/OneWord3DP/3frisk-workstation" target="_blank" rel="noopener">GitHub</a>
       </span>
     </div>
     <div class="pv">
