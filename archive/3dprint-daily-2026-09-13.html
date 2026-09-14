@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D打印动态日报 · 2026-09-13</title>
+<style>
+:root{
+    --ink:#111827; --muted:#64748b; --line:#e4eaf2; --bg:#f3f6fb;
+    --accent:#ea580c; --accent2:#2563eb; --card:#ffffff;
+    --blue:#2563eb; --blue2:#4f8bfb; --blue-soft:#eaf1fe;
+    --purple:#7c3aed; --purple2:#a78bfa; --purple-soft:#f2ecfd;
+    --amber:#b45309; --amber-bg:#fef3c7;
+    --shadow-s:0 1px 2px rgba(15,23,42,.05);
+    --shadow-m:0 12px 32px rgba(15,23,42,.08);
+    --r:16px;
+  }
+  body[data-theme="dark"]{
+    --ink:#e7edf5; --muted:#93a3b8; --line:#26303f; --bg:#0b1220;
+    --accent:#fb923c; --accent2:#4d8dff; --card:#141a2b;
+    --blue:#4d8dff; --blue2:#8ab1ff; --blue-soft:rgba(77,141,255,.14);
+    --purple:#a78bfa; --purple-soft:rgba(167,139,250,.16);
+    --amber:#fbbf24; --amber-bg:rgba(251,191,36,.15);
+    --shadow-s:0 1px 2px rgba(0,0,0,.35);
+    --shadow-m:0 12px 32px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--ink); line-height:1.65; -webkit-font-smoothing:antialiased; }
+  a{color:inherit;text-decoration:none}
+  .topnav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+  .topnav .inner{display:flex;align-items:center;gap:20px;height:64px;max-width:1280px;margin:0 auto;padding:0 28px}
+  .logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;white-space:nowrap;color:var(--ink)}
+  .logo .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,var(--blue),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 4px 14px rgba(37,99,235,.35)}
+  .navtabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+  .navtabs::-webkit-scrollbar{display:none}
+  .navtabs a{font-size:15px;font-weight:500;color:var(--muted);padding:8px 16px;border-radius:10px;white-space:nowrap;transition:all .15s}
+  .navtabs a:hover{color:var(--blue);background:var(--blue-soft)}
+  .navtabs a.active{color:var(--blue);font-weight:700;background:var(--blue-soft)}
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .tbtn{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;transition:transform .15s,box-shadow .15s;background:transparent}
+  .tbtn:hover{transform:scale(1.12)}
+  .tbtn.on{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .tbtn.t-light{background:linear-gradient(135deg,#fff 50%,var(--blue) 50%)}
+  .tbtn.t-dark{background:linear-gradient(135deg,#10182f 50%,#58a6ff 50%)}
+  .wrap { max-width:1080px; margin:0 auto; padding:20px 18px 60px; }
+  header.hero { background:linear-gradient(135deg,#2563eb 0%,#4f8bfb 52%,#7c3aed 125%); color:#fff; border-radius:16px; padding:26px 30px 20px; margin-bottom:18px; box-shadow:var(--shadow-m); }
+  header.hero .btns{text-align:right;margin-top:10px}
+  .pbtn{font-size:12px;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.45);padding:5px 14px;border-radius:999px;cursor:pointer;font-weight:600;font-family:inherit;text-decoration:none;display:inline-block;transition:background .15s}
+  .pbtn:hover{background:rgba(255,255,255,.3)}
+  @media (max-width:640px){
+    .topnav .inner{flex-wrap:wrap;row-gap:4px;height:auto;padding:12px 16px 8px}
+    .navtabs{order:3;width:100%;flex:none}
+    .nav-right{gap:8px}
+    .navtabs a{padding:8px 12px}
+  }
+  header.hero h1 { font-size:26px; letter-spacing:.5px; }
+  header.hero .sub { opacity:.85; margin-top:6px; font-size:14px; }
+  .statbar { display:flex; gap:12px; flex-wrap:wrap; margin:16px 0 4px; }
+  .stat { flex:1 1 180px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); border-radius:10px; padding:10px 14px; }
+  .stat b { display:block; font-size:18px; }
+  .stat span { font-size:12px; opacity:.8; }
+  h2.sec { display:flex; align-items:center; gap:10px; font-size:21px; margin:30px 0 6px; }
+  h2.sec .no { background:var(--accent); color:#fff; border-radius:8px; width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; font-size:16px; }
+  .lead { color:var(--muted); font-size:14px; margin-bottom:12px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.05); display:flex; flex-direction:column; }
+  .card .imgbox { height:170px; background:#eef1f4; position:relative; overflow:hidden; }
+  .card-img { width:100%; height:100%; object-fit:cover; display:block; }
+  .card .tag { position:absolute; left:10px; top:10px; background:rgba(13,43,62,.85); color:#fff; font-size:12px; padding:2px 9px; border-radius:20px; }
+  .card .body { padding:14px 16px; display:flex; flex-direction:column; gap:8px; flex:1; }
+  .card h3 { font-size:15px; line-height:1.4; }
+  .card .date { font-size:12px; color:var(--accent2); }
+  .card p { font-size:13px; color:var(--ink); }
+  .card .pts { display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; }
+  .chip { font-size:11px; background:var(--blue-soft); color:var(--accent2); border:1px solid var(--line); padding:2px 8px; border-radius:14px; }
+  .card a.src { margin-top:6px; font-size:12px; color:var(--accent); text-decoration:none; }
+  .notice { background:var(--amber-bg); border:1px solid rgba(200,160,60,.45); border-left:4px solid var(--amber); border-radius:8px; padding:12px 14px; font-size:13px; margin:12px 0; color:var(--amber); }
+  .mcard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-bottom:14px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:transform .15s,box-shadow .15s;}
+  .mcard:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.10);}
+  .mimg{position:relative;height:150px;background:#eef1f4;}
+  .mimg-src{width:100%;height:100%;object-fit:cover;display:block;}
+  .mrank{position:absolute;left:8px;top:8px;background:rgba(13,43,62,.85);color:#fff;min-width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+  .mbody{padding:11px 13px;display:flex;flex-direction:column;gap:7px;flex:1;}
+  .mbody h4{font-size:13.5px;line-height:1.4;min-height:38px;}
+  .mstats{display:flex;flex-wrap:wrap;gap:5px;}
+  .mstats span{font-size:11px;background:var(--blue-soft);color:var(--accent2);border:1px solid var(--line);padding:1px 7px;border-radius:12px;}
+  .mauthor{font-size:11.5px;color:var(--muted);margin-top:auto;}
+  .video-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(310px,1fr)); gap:14px; }
+  .vcard { background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; display:flex; gap:12px; padding:12px; }
+  .vcard img { width:118px; height:72px; object-fit:cover; border-radius:8px; flex-shrink:0; }
+  .vcard .info { flex:1; min-width:0; }
+  .vcard .t { font-size:13px; font-weight:600; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .vcard .meta { font-size:11.5px; color:var(--muted); margin-top:4px; }
+  .vcard .meta b { color:var(--ink); }
+  .vcard a { color:var(--accent2); font-size:11.5px; text-decoration:none; }
+  .rank { background:var(--accent); color:#fff; width:22px; height:22px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; margin-right:6px; }
+  footer { margin-top:34px; border-top:1px solid var(--line); padding-top:14px; color:var(--muted); font-size:12px; }
+  .method { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; font-size:12.5px; color:var(--ink); margin-top:14px; }
+  .method b { color:var(--ink); }
+
+  /* 0912 additions: restricted stat + red notice, theme-aware */
+  .stat.restricted{background:rgba(251,191,36,.22);border-color:rgba(251,191,36,.6);}
+  .notice.red{background:#fdeceb;border:1px solid #f3c0bd;border-left:4px solid #e03131;color:#6b211e;}
+  body[data-theme="dark"] .notice.red{background:rgba(224,49,49,.15);border-color:rgba(224,49,49,.4);border-left-color:#f87171;color:#fca5a5;}
+
+/* 无真实图条目：主题渐变色块（不使用占位图层） */
+.imgbox .noimg,.mimg .noimg{display:block;width:100%;height:100%;background:linear-gradient(135deg,var(--blue-soft),var(--purple-soft));}
+.imgbox .noimg::after,.mimg .noimg::after{content:"⬡";display:flex;align-items:center;justify-content:center;height:100%;font-size:34px;opacity:.3;color:var(--blue);}
+</style>
+</head>
+<body data-theme="light">
+<nav class="topnav">
+  <div class="inner">
+    <a class="logo" href="index.html"><span class="mark">⬡</span>一言智造</a>
+    <div class="navtabs">
+      <a href="index.html#workspace">个人工作台</a>
+      <a href="index.html#tools" class="active">3D打印工具</a>
+      <a href="index.html#resources">资源中心</a>
+      <a href="index.html#community">社区交流</a>
+    </div>
+    <div class="nav-right">
+      <button class="tbtn t-light on" data-t="light" title="浅色模式" aria-label="浅色模式"></button>
+      <button class="tbtn t-dark" data-t="dark" title="深色模式" aria-label="深色模式"></button>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+<header class="hero">
+  <h1>🖨️ 3D打印动态日报</h1>
+  <div class="sub">9月13日 · 星期日 · 北京时间 UTC+8 · 覆盖窗口：2026-09-11 04:50 ~ 2026-09-13 04:50（近 48 小时）</div>
+  <div class="statbar"><div class="stat"><b>9</b><span>硬件/软件/技术/应用动态</span></div><div class="stat"><b>12</b><span>模型榜（仅国内区 12）</span></div><div class="stat"><b>6</b><span>抖音 48h 实测视频</span></div><div class="stat"><b>6</b><span>小红书 48h 实测视频</span></div></div>
+  <div class="btns"><a class="pbtn" href="index.html">← 返回工作站</a></div>
+</header>
+
+<h2 class="sec"><span class="no">1</span>硬件 / 软件 / 技术 / 应用动态（近 48h · 家用 / 桌面级）</h2>
+<div class="lead">只收录 2026-09-11 04:50 ~ 2026-09-13 04:50（近 48 小时） 窗口内、面向家用与桌面场景的事件：硬件（消费级 FDM / 树脂 / UV / 激光 / 扫描、桌面级专业机、家用龙头零售与资本动态）、软件（切片软件与 AI 建模工具更新、APP / 固件 / 云服务）、技术（桌面级新工艺 / 新材料 / 新方法）、应用（消费级文创 / 教育 / 医疗 / 材料工艺等落地案例）；工业金属粉末、军工、航天、汽车量产等工业内容已按要求排除。共 9 条（3 列网格；本期 硬件 4 / 材料 2 / 软件 1 / 应用 2）。</div>
+<div class="grid">
+
+  <div class="card">
+    <div class="imgbox"><img class="card-img" src="covers/hw_0913_creality_lenovo.jpg" alt="创想三维与联想联合启动百店3D打印体验：约百台设备进驻全国体验店" loading="lazy"><span class="tag">硬件·零售渠道</span></div>
+    <div class="body">
+      <div class="date">📅 2026-09-11</div>
+      <h3>创想三维与联想联合启动百店3D打印体验：约百台设备进驻全国体验店</h3>
+      <p>创想三维与联想开展「联想无界·创想有形」活动，约百台创想三维3D打印机进驻全国约100家联想授权/直营体验店；9月15日官方揭晓玩法与领取规则，用户可到店体验城市限定模型、领取3D打印周边及平板壳，让消费级3D打印通过PC零售渠道触达更多家庭用户。</p>
+      <div class="pts"><span class="chip">百台设备入驻全国约100家联想体验店</span><span class="chip">9月15日揭晓玩法和周边领取规则</span><span class="chip">桌面3D打印借力3C零售渠道下沉家庭</span></div>
+      <a class="src" href="https://www.3dzyk.cn/thread-39612-1-1.html" target="_blank" rel="noopener">来源 ↗</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="imgbox"><img class="card-img" src="covers/hw_0911_axtra3d_lumiax1.jpg" alt="Axtra3D将携Lumia X1树脂3D打印机亮相IMTS2026：混合光合系统+一体化后处理" loading="lazy"><span class="tag">硬件·桌面光固化</span></div>
+    <div class="body">
+      <div class="date">📅 2026-09-11</div>
+      <h3>Axtra3D将携Lumia X1树脂3D打印机亮相IMTS2026：混合光合系统+一体化后处理</h3>
+      <p>Axtra3D将在IMTS2026展展示Lumia X1立体光刻3D打印机：混合光合作用系统，成型尺寸249×140×495mm，层厚25–200μm，兼容405nm树脂，并集成TruLayer分离技术与Axtra Workflow闭环系统，实现打印、清洗、固化及过程监控一体化。</p>
+      <div class="pts"><span class="chip">成型249×140×495mm、层厚25–200μm</span><span class="chip">TruLayer分离+Workflow闭环，打印清洗固化监控一体</span><span class="chip">兼容405nm树脂，面向工作室/高校场景</span></div>
+      <a class="src" href="https://www.3dzyk.cn/thread-39607-1-1.html" target="_blank" rel="noopener">来源 ↗</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="imgbox"><img class="card-img" src="covers/hw_0911_boli_elasto.jpg" alt="博理科技ELASTO1000FR阻燃弹性材料通过SGS认证：达GB8624B1难燃低烟" loading="lazy"><span class="tag">材料·阻燃</span></div>
+    <div class="body">
+      <div class="date">📅 2026-09-11</div>
+      <h3>博理科技ELASTO1000FR阻燃弹性材料通过SGS认证：达GB8624B1难燃低烟</h3>
+      <p>博理科技ELASTO1000FR阻燃材料通过SGS检测：按GB8624-2012标准达到GB8624B1（C-s1）级，难燃且产烟量低；临界热辐射通量5.5kW/m²，总烟气量441.5%×min。弹性体材料在消防与严苛环境中有更可靠的合规上限，拓展了3D打印阻燃材料的应用范围。</p>
+      <div class="pts"><span class="chip">达到SGS GB8624B1（C-s1）难燃低烟等级</span><span class="chip">临界热辐射通量5.5kW/m²</span><span class="chip">拓展阻燃弹性体在3D打印场景的应用</span></div>
+      <a class="src" href="https://www.3dzyk.cn/thread-39613-1-1.html" target="_blank" rel="noopener">来源 ↗</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="imgbox"><img class="card-img" src="covers/hw_0911_xinbo_flex.jpg" alt="深圳鑫博诚展台：PEBA/PEBU柔性耗材走上FDM，发泡工艺成新重点" loading="lazy"><span class="tag">材料·柔性/发泡</span></div>
+    <div class="body">
+      <div class="date">📅 2026-09-11</div>
+      <h3>深圳鑫博诚展台：PEBA/PEBU柔性耗材走上FDM，发泡工艺成新重点</h3>
+      <p>Formnext Asia Shenzhen 2026期间，深圳鑫博诚材料科技有限公司把PEBA、PEBU及PEBU Foam柔性材料摆上台面，旁边是3D打印鞋、篮球、汽车腰靠、义足等应用；今年重点押注「发泡」工艺，PEBU Foam发泡后硬度覆盖范围更宽，为桌面FDM柔性/缓震场景提供更多材料选择。</p>
+      <div class="pts"><span class="chip">PEBU Foam发泡后硬度覆盖范围宽</span><span class="chip">展示3D打印鞋/篮球/腰靠等应用</span><span class="chip">柔性耗材面向家庭与专业FDM场景</span></div>
+      <a class="src" href="https://www.3dzyk.cn/thread-39611-1-1.html" target="_blank" rel="noopener">来源 ↗</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="imgbox"><img class="card-img" src="covers/hw_0711_gpt6_v2fun.jpg" alt="GPT-6 Astra×V2Fun：大模型开始「调用」3D生成，组件再现挖掘机" loading="lazy"><span class="tag">软件·AI建模</span></div>
+    <div class="body">
+      <div class="date">📅 2026-09-11</div>
+      <h3>GPT-6 Astra×V2Fun：大模型开始「调用」3D生成，组件再现挖掘机</h3>
+      <p>一张挖掘机参考图进入GPT-6 Astra后，模型先识别驾驶室、履带、底盘、动臂、斗杆和铲斗，再把复杂部件交给V2Fun 2.0生成，最后通过Three.js补齐液压管、螺丝、转轴和操作摇杆，并完成尺度匹配与整体装配。大模型不必独自完成所有几何，而是按任务调度不同专业生成能力，让「想法→可打印模型」的路径更短。</p>
+      <div class="pts"><span class="chip">GPT-6识别部件并把几何生成交给V2Fun</span><span class="chip">Three.js补齐细节并完成整机装配</span><span class="chip">AI建模转向「按需调度专业3D生成」</span></div>
+      <a class="src" href="https://www.3dzyk.cn/thread-39609-1-1.html" target="_blank" rel="noopener">来源 ↗</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="imgbox"><img class="card-img" src="covers/hw_0911_shanxi_banner.jpg" alt="陕西聚高增材：省运会吉祥物「麦穗儿」3D打印批量出2000余套" loading="lazy"><span class="tag">应用·文创</span></div>
+    <div class="body">
+      <div class="date">📅 2026-09-11</div>
+      <h3>陕西聚高增材：省运会吉祥物「麦穗儿」3D打印批量出2000余套</h3>
+      <p>陕西聚高增材智造依托3D打印及多色配色工艺，批量产出省十八运会吉祥物「麦穗儿」2000余套成品，把农耕符号转化为赛事文创IP，体现出高校成果转化与地方产业结合的模式，推动增材制造从专业领域拓展至大众文创应用。</p>
+      <div class="pts"><span class="chip">3D打印+多色配色批量2000+套</span><span class="chip">把农耕符号转化为赛事文创IP</span><span class="chip">高校成果转化+地方产业结合的应用案例</span></div>
+      <a class="src" href="https://www.3dzyk.cn/thread-39614-1-1.html" target="_blank" rel="noopener">来源 ↗</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="imgbox"><img class="card-img" src="covers/hw_0911_panda_hub.jpg" alt="Panda Hub V2发布：为拓竹3D打印机扩展USB/MX1.25接口" loading="lazy"><span class="tag">硬件·配件</span></div>
+    <div class="body">
+      <div class="date">📅 2026-09-11</div>
+      <h3>Panda Hub V2发布：为拓竹3D打印机扩展USB/MX1.25接口</h3>
+      <p>必趣推出Panda Hub V2，面向拓竹3D打印机接口扩展需求，新增2个USB接口及MX1.25接口，其中1路USB支持U盘数据传输和供电；支持拓竹P1/P2/X1/X2/H2系列，可外挂安装，便于连接更多外设并简化布线。</p>
+      <div class="pts"><span class="chip">新增2路USB+MX1.25，1路USB支持U盘数据/供电</span><span class="chip">兼容拓竹P1/P2/X1/X2/H2系列</span><span class="chip">为拓竹生态扩展外设与简化布线</span></div>
+      <a class="src" href="https://www.3dzyk.cn/thread-39598-1-1.html" target="_blank" rel="noopener">来源 ↗</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="imgbox"><img class="card-img" src="covers/hw_0911_amazon_top5.jpg" alt="2026亚马逊最畅销5款3D打印机：中国品牌包揽，全球每10台约9台中国造" loading="lazy"><span class="tag">硬件·海外零售</span></div>
+    <div class="body">
+      <div class="date">📅 2026-09-11</div>
+      <h3>2026亚马逊最畅销5款3D打印机：中国品牌包揽，全球每10台约9台中国造</h3>
+      <p>资源库综合2026年亚马逊畅销情况：搜索「3D打印机」排名靠前的几乎清一色来自中国品牌，头部厂商多款机型同时在榜；据行业统计，2026年1—7月中国3D打印机出口量已达421万台，接近2025年全年503万台规模，全球每卖出10台消费级3D打印机约有9台来自中国。</p>
+      <div class="pts"><span class="chip">亚马逊畅销榜几乎全是中国品牌</span><span class="chip">1—7月出口421万台、接近2025全年</span><span class="chip">全球消费级每卖出10台约9台中国造</span></div>
+      <a class="src" href="https://www.3dzyk.cn/thread-39616-1-1.html" target="_blank" rel="noopener">来源 ↗</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="imgbox"><img class="card-img" src="covers/hw_0911_signs_now_farm.jpg" alt="杭州某公司打造近3000台设备的3D打印农场：日均出货1万—2万件" loading="lazy"><span class="tag">应用·打印农场</span></div>
+    <div class="body">
+      <div class="date">📅 2026-09-11</div>
+      <h3>杭州某公司打造近3000台设备的3D打印农场：日均出货1万—2万件</h3>
+      <p>杭州某科技有限公司在工业园区打造3D打印农场，部署近3000台打印机规模化生产，日均出货1万—2万件；该公司2025年8月起规划并计划今年下半年扩至5000台设备，同时开拓线上、线下及海外市场，展现消费级打印机的规模化小商品生产能力。</p>
+      <div class="pts"><span class="chip">近3000台设备、日均1万—2万件</span><span class="chip">下半年计划扩至5000台</span><span class="chip">消费级打印机的规模化小商品生产方式</span></div>
+      <a class="src" href="https://www.3dzyk.cn/thread-39608-1-1.html" target="_blank" rel="noopener">来源 ↗</a>
+    </div>
+  </div>
+</div>
+
+<h2 class="sec"><span class="no">2</span>模型榜 · 本周热门（MakerWorld 官方热门榜 · 国内版）</h2>
+<div class="lead">数据源：MakerWorld 官方<b>热门（Trending）榜</b>接口（国内区 <code>makerworld.com.cn</code>，浏览器登录态同源请求）。<b>MakerWorld 无独立「周榜」页面，其官方热门榜即平台「本周热度」的最接近口径</b>，本报告按「本周热门」标注。每条列出<b>下载 / 点赞 / 打印 / 收藏</b>四维计数（官方接口实时值）并标注<b>发布时间</b>与<b>快照时间</b>。共取前 12 名，全部卡片式带封面图；<b>国际版模型与 Printables 模型按国内版要求不收录</b>，国际热点请见独立国际版页面。已按模型 ID 跳过此前日报报道过的模型（本轮自动跳过 48 个已被报道模型）。快照：2026-09-13 01:35:14。</div>
+<h3 style="margin:20px 0 10px;font-size:16px;">🇨🇳 国内区（makerworld.com.cn） · 本周热门 Top 12</h3>
+<div class="mcard-grid">
+
+  <div class="mcard">
+    <div class="mimg"><img class="mimg-src" src="covers/mw_cn_2845150.jpg" alt="OTF直跳解压卡套 单指机械开合" loading="lazy"><span class="mrank">1</span></div>
+    <div class="mbody">
+      <h4>OTF直跳解压卡套 单指机械开合</h4>
+      <div class="mstats"><span>⬇ 279</span><span>♥ 177</span><span>🖨 164</span><span>★ 567</span></div>
+      <div class="mauthor">爱溜达的鱼 · 发布 08-14</div>
+      <a class="src" href="https://makerworld.com.cn/zh/models/2845150-otfzhi-tiao-jie-ya-qia-tao-dan-zhi-ji-jie-kai-he" target="_blank" rel="noopener">查看模型 ↗</a>
+    </div>
+  </div>
+
+  <div class="mcard">
+    <div class="mimg"><img class="mimg-src" src="covers/mw_cn_2927573.jpg" alt="教师节礼物向日葵 3D 打印笔筒礼物可改文字无需支撑学生送老师实用桌面摆件" loading="lazy"><span class="mrank">2</span></div>
+    <div class="mbody">
+      <h4>教师节礼物向日葵 3D 打印笔筒礼物可改文字无需支撑学生送老师实用桌面摆件</h4>
+      <div class="mstats"><span>⬇ 378</span><span>♥ 172</span><span>🖨 233</span><span>★ 699</span></div>
+      <div class="mauthor">@user_2153030100 · 发布 09-04</div>
+      <a class="src" href="https://makerworld.com.cn/zh/models/2927573-jiao-shi-jie-li-wu-xiang-ri-kui-3d-da-yin-bi-tong" target="_blank" rel="noopener">查看模型 ↗</a>
+    </div>
+  </div>
+
+  <div class="mcard">
+    <div class="mimg"><img class="mimg-src" src="covers/mw_cn_2860591.jpg" alt="初音未来坐姿手办" loading="lazy"><span class="mrank">3</span></div>
+    <div class="mbody">
+      <h4>初音未来坐姿手办</h4>
+      <div class="mstats"><span>⬇ 282</span><span>♥ 171</span><span>🖨 143</span><span>★ 607</span></div>
+      <div class="mauthor">✦ 不起眼的人 ✦ · 发布 08-18</div>
+      <a class="src" href="https://makerworld.com.cn/zh/models/2860591-chu-yin-wei-lai-zuo-zi-shou-ban" target="_blank" rel="noopener">查看模型 ↗</a>
+    </div>
+  </div>
+
+  <div class="mcard">
+    <div class="mimg"><img class="mimg-src" src="covers/mw_cn_2887982.jpg" alt="!定制! !可商用! !包含抽奖! 三角洲封号标牌生成器" loading="lazy"><span class="mrank">4</span></div>
+    <div class="mbody">
+      <h4>!定制! !可商用! !包含抽奖! 三角洲封号标牌生成器</h4>
+      <div class="mstats"><span>⬇ 175</span><span>♥ 171</span><span>🖨 17</span><span>★ 378</span></div>
+      <div class="mauthor">SammFang · 发布 08-25</div>
+      <a class="src" href="https://makerworld.com.cn/zh/models/2887982-ding-zhi-ke-shang-yong-bao-han-chou-jiang-san-jiao" target="_blank" rel="noopener">查看模型 ↗</a>
+    </div>
+  </div>
+
+  <div class="mcard">
+    <div class="mimg"><img class="mimg-src" src="covers/mw_cn_2856433.jpg" alt="微缩赛博武士刀模型" loading="lazy"><span class="mrank">5</span></div>
+    <div class="mbody">
+      <h4>微缩赛博武士刀模型</h4>
+      <div class="mstats"><span>⬇ 42</span><span>♥ 168</span><span>🖨 11</span><span>★ 521</span></div>
+      <div class="mauthor">爱的战士初号机 · 发布 08-17</div>
+      <a class="src" href="https://makerworld.com.cn/zh/models/2856433-wei-suo-sai-bo-wu-shi-dao-mo-xing" target="_blank" rel="noopener">查看模型 ↗</a>
+    </div>
+  </div>
+
+  <div class="mcard">
+    <div class="mimg"><img class="mimg-src" src="covers/mw_cn_2872564.jpg" alt="小米温湿度计2 / 3mini底座" loading="lazy"><span class="mrank">6</span></div>
+    <div class="mbody">
+      <h4>小米温湿度计2 / 3mini底座</h4>
+      <div class="mstats"><span>⬇ 848</span><span>♥ 166</span><span>🖨 631</span><span>★ 1,156</span></div>
+      <div class="mauthor">Ms · 发布 08-21</div>
+      <a class="src" href="https://makerworld.com.cn/zh/models/2872564-xiao-mi-wen-shi-du-ji-2-3minidi-zuo" target="_blank" rel="noopener">查看模型 ↗</a>
+    </div>
+  </div>
+
+  <div class="mcard">
+    <div class="mimg"><img class="mimg-src" src="covers/mw_cn_2872500.jpg" alt="全拆件：戴珍珠耳环少女氛围灯" loading="lazy"><span class="mrank">7</span></div>
+    <div class="mbody">
+      <h4>全拆件：戴珍珠耳环少女氛围灯</h4>
+      <div class="mstats"><span>⬇ 146</span><span>♥ 165</span><span>🖨 59</span><span>★ 732</span></div>
+      <div class="mauthor">村民刘大才 · 发布 08-21</div>
+      <a class="src" href="https://makerworld.com.cn/zh/models/2872500-quan-chai-jian-dai-zhen-zhu-er-huan-shao-nu-fen-we" target="_blank" rel="noopener">查看模型 ↗</a>
+    </div>
+  </div>
+
+  <div class="mcard">
+    <div class="mimg"><img class="mimg-src" src="covers/mw_cn_2872314.jpg" alt="龙息焚城氛围小夜灯" loading="lazy"><span class="mrank">8</span></div>
+    <div class="mbody">
+      <h4>龙息焚城氛围小夜灯</h4>
+      <div class="mstats"><span>⬇ 285</span><span>♥ 163</span><span>🖨 158</span><span>★ 771</span></div>
+      <div class="mauthor">阿伟 · 发布 08-21</div>
+      <a class="src" href="https://makerworld.com.cn/zh/models/2872314-long-xi-fen-cheng-fen-wei-xiao-ye-deng" target="_blank" rel="noopener">查看模型 ↗</a>
+    </div>
+  </div>
+
+  <div class="mcard">
+    <div class="mimg"><img class="mimg-src" src="covers/mw_cn_2869394.jpg" alt="12生肖来！【单色+多色版】" loading="lazy"><span class="mrank">9</span></div>
+    <div class="mbody">
+      <h4>12生肖来！【单色+多色版】</h4>
+      <div class="mstats"><span>⬇ 83</span><span>♥ 163</span><span>🖨 33</span><span>★ 406</span></div>
+      <div class="mauthor">黑日 · 发布 08-20</div>
+      <a class="src" href="https://makerworld.com.cn/zh/models/2869394-12sheng-xiao-lai-dan-se-duo-se-ban" target="_blank" rel="noopener">查看模型 ↗</a>
+    </div>
+  </div>
+
+  <div class="mcard">
+    <div class="mimg"><img class="mimg-src" src="covers/mw_cn_2867819.jpg" alt="拦霉运蓝莓宝宝挂件钥匙扣按键解压点击器玩具" loading="lazy"><span class="mrank">10</span></div>
+    <div class="mbody">
+      <h4>拦霉运蓝莓宝宝挂件钥匙扣按键解压点击器玩具</h4>
+      <div class="mstats"><span>⬇ 192</span><span>♥ 162</span><span>🖨 102</span><span>★ 700</span></div>
+      <div class="mauthor">钦 · 发布 08-19</div>
+      <a class="src" href="https://makerworld.com.cn/zh/models/2867819-lan-mei-yun-lan-mei-bao-bao-gua-jian-yao-chi-kou-a" target="_blank" rel="noopener">查看模型 ↗</a>
+    </div>
+  </div>
+
+  <div class="mcard">
+    <div class="mimg"><img class="mimg-src" src="covers/mw_cn_2850408.jpg" alt="平凡蜘蛛网" loading="lazy"><span class="mrank">11</span></div>
+    <div class="mbody">
+      <h4>平凡蜘蛛网</h4>
+      <div class="mstats"><span>⬇ 515</span><span>♥ 161</span><span>🖨 312</span><span>★ 651</span></div>
+      <div class="mauthor">X-Hobby · 发布 08-15</div>
+      <a class="src" href="https://makerworld.com.cn/zh/models/2850408-ping-fan-zhi-zhu-wang" target="_blank" rel="noopener">查看模型 ↗</a>
+    </div>
+  </div>
+
+  <div class="mcard">
+    <div class="mimg"><img class="mimg-src" src="covers/mw_cn_2850644.jpg" alt="星际战斗机" loading="lazy"><span class="mrank">12</span></div>
+    <div class="mbody">
+      <h4>星际战斗机</h4>
+      <div class="mstats"><span>⬇ 193</span><span>♥ 161</span><span>🖨 142</span><span>★ 513</span></div>
+      <div class="mauthor">Cyberforge · 发布 08-15</div>
+      <a class="src" href="https://makerworld.com.cn/zh/models/2850644-xing-ji-zhan-dou-ji" target="_blank" rel="noopener">查看模型 ↗</a>
+    </div>
+  </div>
+</div>
+
+<h2 class="sec"><span class="no">3</span>视频热点 · B站 48 小时内最火</h2>
+<div class="lead">通过 B 站 WBI 签名搜索接口（<code>api.bilibili.com/x/web-interface/wbi/search/type</code>）抓取，并用 <code>x/web-interface/view</code> 接口核验真实播放 / 点赞 / 弹幕；窗口为 2026-09-11 04:50 ~ 2026-09-13 04:50（近 48 小时）（截止 2026-09-11 01:35:23），按真实播放量排序取前 9（播放 / 点赞 / 弹幕为接口真实值）。封面用 view 接口 pic 字段（视频页 og:image 同源缩略图），已 base64 内嵌。</div>
+<div class="video-list">
+
+  <div class="vcard">
+    <img src="covers/bili_BV1TpYR6QEMo.jpg" alt="【从想法到起飞】年轻人的第一架折叠滑翔翼进行中" loading="lazy">
+    <div class="info">
+      <div class="t">🥇【从想法到起飞】年轻人的第一架折叠滑翔翼进行中</div>
+      <div class="meta"><b>608</b> 播放 · <b>21</b> 赞 · <b>1</b> 弹幕</div>
+      <div class="meta">UP主：仓鼠FPV · 发布 09-12 22:35 · 关键词：3D打印</div>
+      <a href="https://www.bilibili.com/video/BV1TpYR6QEMo" target="_blank" rel="noopener">BV1TpYR6QEMo ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/bili_BV1XDYX69EaF.jpg" alt="假面骑士麦斯 简易面板 表里转换装置" loading="lazy">
+    <div class="info">
+      <div class="t">🥈假面骑士麦斯 简易面板 表里转换装置</div>
+      <div class="meta"><b>496</b> 播放 · <b>13</b> 赞 · <b>0</b> 弹幕</div>
+      <div class="meta">UP主：透明23 · 发布 09-12 18:53 · 关键词：3D打印</div>
+      <a href="https://www.bilibili.com/video/BV1XDYX69EaF" target="_blank" rel="noopener">BV1XDYX69EaF ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/bili_BV1FxY26mE5U.jpg" alt="骨刺手环｜3D打印亚比配饰" loading="lazy">
+    <div class="info">
+      <div class="t">🥉骨刺手环｜3D打印亚比配饰</div>
+      <div class="meta"><b>456</b> 播放 · <b>0</b> 赞 · <b>0</b> 弹幕</div>
+      <div class="meta">UP主：CB-Atelier · 发布 09-12 19:55 · 关键词：3D打印</div>
+      <a href="https://www.bilibili.com/video/BV1FxY26mE5U" target="_blank" rel="noopener">BV1FxY26mE5U ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/bili_BV1dSYR6AEFU.jpg" alt="自己DIY，定制属于自己的敲豆作品" loading="lazy">
+    <div class="info">
+      <div class="t"><span class="rank">4</span>自己DIY，定制属于自己的敲豆作品</div>
+      <div class="meta"><b>451</b> 播放 · <b>0</b> 赞 · <b>0</b> 弹幕</div>
+      <div class="meta">UP主：-指尖方寸- · 发布 09-12 21:25 · 关键词：3D打印</div>
+      <a href="https://www.bilibili.com/video/BV1dSYR6AEFU" target="_blank" rel="noopener">BV1dSYR6AEFU ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/bili_BV1MEYX62ERg.jpg" alt="免费定制属于你自己你的MC立体头雕发货情况汇报2" loading="lazy">
+    <div class="info">
+      <div class="t"><span class="rank">5</span>免费定制属于你自己你的MC立体头雕发货情况汇报2</div>
+      <div class="meta"><b>425</b> 播放 · <b>40</b> 赞 · <b>1</b> 弹幕</div>
+      <div class="meta">UP主：外_道 · 发布 09-12 20:00 · 关键词：3D打印</div>
+      <a href="https://www.bilibili.com/video/BV1MEYX62ERg" target="_blank" rel="noopener">BV1MEYX62ERg ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/bili_BV1QoYR6tEd7.jpg" alt="【老滕】手动退料器 终极优化版" loading="lazy">
+    <div class="info">
+      <div class="t"><span class="rank">6</span>【老滕】手动退料器 终极优化版</div>
+      <div class="meta"><b>397</b> 播放 · <b>18</b> 赞 · <b>0</b> 弹幕</div>
+      <div class="meta">UP主：易凡文化丨老滕 · 发布 09-12 21:56 · 关键词：3D打印</div>
+      <a href="https://www.bilibili.com/video/BV1QoYR6tEd7" target="_blank" rel="noopener">BV1QoYR6tEd7 ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/bili_BV1zsYd6uEgv.jpg" alt="什么场景适合戴这个手甲" loading="lazy">
+    <div class="info">
+      <div class="t"><span class="rank">7</span>什么场景适合戴这个手甲</div>
+      <div class="meta"><b>316</b> 播放 · <b>11</b> 赞 · <b>0</b> 弹幕</div>
+      <div class="meta">UP主：YAO工作室 · 发布 09-12 20:54 · 关键词：3D打印</div>
+      <a href="https://www.bilibili.com/video/BV1zsYd6uEgv" target="_blank" rel="noopener">BV1zsYd6uEgv ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/bili_BV1KgYd6SEAq.jpg" alt="3 款 3D 打印龙模型" loading="lazy">
+    <div class="info">
+      <div class="t"><span class="rank">8</span>3 款 3D 打印龙模型</div>
+      <div class="meta"><b>194</b> 播放 · <b>3</b> 赞 · <b>0</b> 弹幕</div>
+      <div class="meta">UP主：Mdddooo · 发布 09-12 20:09 · 关键词：3D打印</div>
+      <a href="https://www.bilibili.com/video/BV1KgYd6SEAq" target="_blank" rel="noopener">BV1KgYd6SEAq ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/bili_BV1hZYR6ZEst.jpg" alt="KB398&quot;Pirate&quot; 背衬折 非遗传承3D打印玩具 Johan Jordaan合作款" loading="lazy">
+    <div class="info">
+      <div class="t"><span class="rank">9</span>KB398&quot;Pirate&quot; 背衬折 非遗传承3D打印玩具 Johan Jordaan合作款</div>
+      <div class="meta"><b>188</b> 播放 · <b>1</b> 赞 · <b>0</b> 弹幕</div>
+      <div class="meta">UP主：木子の言成 · 发布 09-12 22:12 · 关键词：3D打印</div>
+      <a href="https://www.bilibili.com/video/BV1hZYR6ZEst" target="_blank" rel="noopener">BV1hZYR6ZEst ↗</a>
+    </div>
+  </div>
+</div>
+
+<h2 class="sec"><span class="no">4</span>视频热点 · 抖音 48h 实测（登录后搜索，近 48h）</h2>
+<div class="lead">在<b>抖音登录态</b>下，经抖音搜索「3D打印」、筛选面板选「最新发布 + 一周内」后实测采集（快照 2026-09-13 04:50 CST，索引：<a href="https://www.douyin.com/search/3D%E6%89%93%E5%8D%B0?type=video" target="_blank" rel="noopener">douyin.com/search/3D打印?type=video</a>），再人工核为近 48h 内发布，按点赞量排序取 6 条。<b>需显著说明：抖音网页版不暴露精确播放量（仅 App 展示）</b>，页面可实测的互动口径为赞 / 评 / 藏；本板块赞数为搜索页卡片实测值，评论 / 收藏网页版不暴露，作者与相对时间均逐条实测。网页版不提供可抓取封面，统一使用「3D打印工作站」主题占位图，未编造任何数据。</div>
+<div class="video-list">
+
+  <div class="vcard">
+    <img src="covers/douyin_7684472498490963441.jpg" alt="孩子扁平足别忽视，3D打印鞋垫科学干预" loading="lazy">
+    <div class="info">
+      <div class="t">🥇孩子扁平足别忽视，3D打印鞋垫科学干预</div>
+      <div class="meta">赞 <b>3</b>（搜索页实测值 · 网页版不暴露播放量/评论/收藏）</div>
+      <div class="meta">作者：@合肥中健利普3D打印 · 发布 15小时前</div>
+      <a href="https://www.douyin.com/video/7684472498490963441" target="_blank" rel="noopener">7684472498490963441 ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/douyin_7684196467644402950.jpg" alt="挑战给5000台3D打印机做群控！" loading="lazy">
+    <div class="info">
+      <div class="t">🥈挑战给5000台3D打印机做群控！</div>
+      <div class="meta">赞 <b>15</b>（搜索页实测值 · 网页版不暴露播放量/评论/收藏）</div>
+      <div class="meta">作者：@金石恒创3D打印侠姐 · 发布 1天前</div>
+      <a href="https://www.douyin.com/video/7684196467644402950" target="_blank" rel="noopener">7684196467644402950 ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/douyin_7684221006436748596.jpg" alt="可爱杰瑞 3D打印作品" loading="lazy">
+    <div class="info">
+      <div class="t">🥉可爱杰瑞 3D打印作品</div>
+      <div class="meta">赞 <b>98</b>（搜索页实测值 · 网页版不暴露播放量/评论/收藏）</div>
+      <div class="meta">作者：@3D打印梦想家 · 发布 1天前</div>
+      <a href="https://www.douyin.com/video/7684221006436748596" target="_blank" rel="noopener">7684221006436748596 ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/douyin_7684207346234543406.jpg" alt="3D光固化打印，只能做做打样吗？（义乌创想中心）" loading="lazy">
+    <div class="info">
+      <div class="t"><span class="rank">4</span>3D光固化打印，只能做做打样吗？（义乌创想中心）</div>
+      <div class="meta">赞 <b>107</b>（搜索页实测值 · 网页版不暴露播放量/评论/收藏）</div>
+      <div class="meta">作者：@本色新材3D打印-义乌创想中心 · 发布 1天前</div>
+      <a href="https://www.douyin.com/video/7684207346234543406" target="_blank" rel="noopener">7684207346234543406 ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/douyin_7684189400355425562.jpg" alt="3D打印模具制作RC坦克一体式硅胶履带效果测试" loading="lazy">
+    <div class="info">
+      <div class="t"><span class="rank">5</span>3D打印模具制作RC坦克一体式硅胶履带效果测试</div>
+      <div class="meta">赞 <b>24</b>（搜索页实测值 · 网页版不暴露播放量/评论/收藏）</div>
+      <div class="meta">作者：@南极熊3D打印 · 发布 1天前</div>
+      <a href="https://www.douyin.com/video/7684189400355425562" target="_blank" rel="noopener">7684189400355425562 ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/douyin_7684254102452866698.jpg" alt="白色3D打印模型无痕修补胶（UV固化）" loading="lazy">
+    <div class="info">
+      <div class="t"><span class="rank">6</span>白色3D打印模型无痕修补胶（UV固化）</div>
+      <div class="meta">赞 <b>11</b>（搜索页实测值 · 网页版不暴露播放量/评论/收藏）</div>
+      <div class="meta">作者：@3D打印黄博士（关必回） · 发布 1天前</div>
+      <a href="https://www.douyin.com/video/7684254102452866698" target="_blank" rel="noopener">7684254102452866698 ↗</a>
+    </div>
+  </div>
+</div>
+
+<h2 class="sec"><span class="no">5</span>视频热点 · 小红书 48h 实测（登录后搜索，视频分类）</h2>
+<div class="lead">在<b>小红书登录态</b>下打开搜索「3D打印」视频分类实测采集（快照 2026-09-13 04:50 CST），人工核为近 48h，按点赞排序取 6 条；点赞为搜索页卡片实测值，网页版不暴露精确播放量，封面统一使用主题占位图，未编造数据。</div>
+<div class="video-list">
+
+  <div class="vcard">
+    <img src="covers/xhs_6a9fbec1000000002600b95e.jpg" alt="实测封箱+四头打印！多需求玩家的终极选择" loading="lazy">
+    <div class="info">
+      <div class="t">🥇实测封箱+四头打印！多需求玩家的终极选择</div>
+      <div class="meta">赞 <b>1,040</b>（搜索页实测值 · 网页版不暴露播放量）</div>
+      <div class="meta">作者：微醺酒九 · 发布 1天前</div>
+      <a href="https://www.xiaohongshu.com/explore/6a9fbec1000000002600b95e" target="_blank" rel="noopener">原帖 ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/xhs_6aa3cd3b00000000260166ae.jpg" alt="打印成这样怎么办？3D打印翻车救场" loading="lazy">
+    <div class="info">
+      <div class="t">🥈打印成这样怎么办？3D打印翻车救场</div>
+      <div class="meta">赞 <b>8,838</b>（搜索页实测值 · 网页版不暴露播放量）</div>
+      <div class="meta">作者：有猫饼工作室 · 发布 1天前</div>
+      <a href="https://www.xiaohongshu.com/explore/6aa3cd3b00000000260166ae" target="_blank" rel="noopener">原帖 ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/xhs_6aa3d6a9000000002a02cb4e.jpg" alt="也算享受上私人订制了｜不用会建模的3D打印" loading="lazy">
+    <div class="info">
+      <div class="t">🥉也算享受上私人订制了｜不用会建模的3D打印</div>
+      <div class="meta">赞 <b>104</b>（搜索页实测值 · 网页版不暴露播放量）</div>
+      <div class="meta">作者：阿灰呐 · 发布 1天前</div>
+      <a href="https://www.xiaohongshu.com/explore/6aa3d6a9000000002a02cb4e" target="_blank" rel="noopener">原帖 ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/xhs_6aa4f49100000000250360b2.jpg" alt="3D打印 iphone Duo 手机支架" loading="lazy">
+    <div class="info">
+      <div class="t"><span class="rank">4</span>3D打印 iphone Duo 手机支架</div>
+      <div class="meta">赞 <b>70</b>（搜索页实测值 · 网页版不暴露播放量）</div>
+      <div class="meta">作者：大浪的3D打印杂货铺 · 发布 昨天 14:43</div>
+      <a href="https://www.xiaohongshu.com/explore/6aa4f49100000000250360b2" target="_blank" rel="noopener">原帖 ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/xhs_6aa50d4100000000120266e3.jpg" alt="3D打印的大画幅，能打得过林哈夫吗？" loading="lazy">
+    <div class="info">
+      <div class="t"><span class="rank">5</span>3D打印的大画幅，能打得过林哈夫吗？</div>
+      <div class="meta">赞 <b>68</b>（搜索页实测值 · 网页版不暴露播放量）</div>
+      <div class="meta">作者：F.焦外营业中 · 发布 昨天 16:28</div>
+      <a href="https://www.xiaohongshu.com/explore/6aa50d4100000000120266e3" target="_blank" rel="noopener">原帖 ↗</a>
+    </div>
+  </div>
+
+  <div class="vcard">
+    <img src="covers/xhs_6aa4ab1500000000120372f4.jpg" alt="3D打印超梦" loading="lazy">
+    <div class="info">
+      <div class="t"><span class="rank">6</span>3D打印超梦</div>
+      <div class="meta">赞 <b>762</b>（搜索页实测值 · 网页版不暴露播放量）</div>
+      <div class="meta">作者：宝可梦 GO · 发布 昨天 09:29</div>
+      <a href="https://www.xiaohongshu.com/explore/6aa4ab1500000000120372f4" target="_blank" rel="noopener">原帖 ↗</a>
+    </div>
+  </div>
+</div>
+
+<div class="method">
+<b>数据与口径说明：</b><br>
+① <b>动态板块（硬件/软件/技术/应用）</b>：仅收录 2026-09-11 04:50 ~ 2026-09-13 04:50（近 48 小时） 窗口内、已逐条核验来源页<b>原始发布时间</b>的家用/桌面级事件（不采信站点 last_update/更新时间）；工业金属粉末、军工、航天、汽车量产等工业内容已排除。配图优先取来源页 og:image / 正文图，无真实图统一使用「3D打印工作站」主题占位图。<br>
+② <b>模型板块 · 本周热门（周榜口径）</b>：数据来自 MakerWorld 官方<b>热门（Trending）榜</b>接口（国内 2026-09-13 01:35:14 / 国际 2026-09-13 01:35:05），双区各取前 12；MakerWorld 无独立「周榜」页面，官方热门榜即「本周热度」最接近口径；每条列<b>下载/点赞/打印/收藏</b>四维实时计数，已跳过缓存中已报道模型（国内 48 / 国际 52）。另纳入 Printables Trending（近 30 天，2026-09-13 04:50 CST）前 12，字段为下载/评分/赞，链接用作者主页 + 站内搜索，与上期重叠 0 条已标注。<br>
+③ <b>视频板块 · B站</b>：WBI 签名（mixin key + wts + w_rid）实现搜索签名；播放/点赞/弹幕由 <code>x/web-interface/view</code> stat 字段核验，非页面估算；封面用 view 接口 pic（https + Referer 下载）后 base64 内嵌。<br>
+④ <b>视频板块 · 抖音</b>：登录态搜索「3D打印」筛选「最新发布 + 一周内」后人工核 48h（快照 2026-09-13 04:50 CST），共 6 条；赞数为搜索页卡片实测值，网页版不暴露精确播放量/评论/收藏，未将点赞误报为播放；封面无 og:image 统一用主题占位图。<br>
+⑤ <b>视频板块 · 小红书</b>：登录态搜索视频分类实测 6 条（快照 2026-09-13 04:50 CST），点赞为搜索页实测值，网页版不暴露播放量，封面用主题占位图，未编造。<br>⑥ 本报告条目写入工作目录去重缓存 <code>3dprint-reported-cache.json</code>，供后续日报跳过重复报道（模型/视频与国际版允许 48h 内重复，但国内日报仍按缓存跳过已报道）。
+</div>
+<footer>
+快照时间：2026-09-13 04:50:07（CST）· 模型周榜快照 国内 2026-09-13 01:35:14 / 国际 2026-09-13 01:35:05 / Printables 2026-09-13 04:50 CST · 视频窗口截止 2026-09-11 01:35:23 · 动态 9 条 / 模型 12 条（MW 双区各 12 + Printables 12） / B站 9 条 / 抖音 6 条 / 小红书 6 条实测 · 由 一言智造One3DP 生成自包含 HTML 报告，封面图以独立文件随站点发布（covers/）
+</footer>
+</div>
+<div class="pv-bar" style="text-align:center;color:#8a919c;font-size:12px;margin:16px auto 8px;line-height:1.8;">
+  <span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv">-</span> 次 · 累计访客 <span id="busuanzi_value_site_uv">-</span> 人</span>
+</div>
+<script async src="https://busuanzi.ibruce.info/busuanzi.2.3/busuanzi.pure.mini.js"></script>
+<script>
+(function(){
+var THEME_KEY='one3dp_theme';
+function applyTheme(t){
+  document.body.dataset.theme=t;
+  document.querySelectorAll('.tbtn').forEach(function(b){b.classList.toggle('on',b.dataset.t===t);});
+  try{localStorage.setItem(THEME_KEY,t);}catch(e){}
+}
+document.querySelectorAll('.tbtn').forEach(function(b){b.addEventListener('click',function(){applyTheme(b.dataset.t);});});
+try{var sv=localStorage.getItem(THEME_KEY);if(sv)applyTheme(sv);}catch(e){}
+})();
+</script>
+</body>
+</html>
